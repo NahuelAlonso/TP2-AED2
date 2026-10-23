@@ -12,11 +12,12 @@ public class AirMiles implements SistemaAirMiles {
     }
 
     public void registrarUsuario(int id) {//O(logU) promedio y O(n)peor
+        Usuario usuario = new Usuario();
         if(usuarios.tamaño() == 0){//Cambian "los más" solo si antes no había nadie
-            idElMásAcumulador = id;
-            idElMásCanjeador = id;
+            nuevoMásAcumulador(usuario, id);
+            nuevoMásCanjeador(usuario, id);
         }
-        usuarios.definir(id, new Usuario());
+        usuarios.definir(id, usuario);
     }
 
     public void registrarUsuarioConReferidor(int idReferido, int idReferidor) {//O(logU) promedio y O(n)peor
@@ -81,7 +82,7 @@ public class AirMiles implements SistemaAirMiles {
        return usuarios.obtener(id).categoría();
     }
 
-    public int[] rankingMillas(int n) {//O(nlogn)
+    public int[] rankingMillas(int n) {//O(nlogU)
         throw new UnsupportedOperationException("Sin implementar");
     }
 
@@ -106,6 +107,9 @@ public class AirMiles implements SistemaAirMiles {
     }
 
     public int[][] paresTransferidoresExclusivos() {//O(U)
+        //Recorrer el diccionario
+        //Ver para cada usuario si es transferidor exc
+        //Si es de id menor a su transferidor, lo muestr
         throw new UnsupportedOperationException("Sin implementar");
     }
 }

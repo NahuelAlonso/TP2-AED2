@@ -12,6 +12,7 @@ interface Diccionario<K, V> {
 }
 
 interface InterfaceUsuario {
+    //Recordar var de transferidores exclusivos
     public void agregarTransferencia(double millas, int idReferido);
     public void agregarReferencia(int id);
     public void agregarAcumular(String nombrePromo, Promo promocion, double distancia);
@@ -24,6 +25,6 @@ interface InterfaceUsuario {
 }
 
 interface InterfacePromo {
-
-    
+    public double factor();
+    public double tope();    
 }
