@@ -1,30 +1,22 @@
 package aed.tp2;
+interface InterfazUsuario {
 
-interface Diccionario<K, V> {
-    public Diccionario<K,V> diccionarioVacío();
-    public boolean está(V v);
-    public void definir(K k, V v);
-    public void definirRápido(K k, V v);//Toma como req que no exista la clave
-    public V obtener(K k);
-    public void borrar(K k);
-    public int tamaño();
-    public boolean igualdad(Diccionario<K, V> dict);
-}
-
-interface InterfaceUsuario {
-    //Recordar var de transferidores exclusivos
-    public void agregarTransferencia(double millas, int idReferido);
-    public void agregarReferencia(int id);
-    public void agregarAcumular(String nombrePromo, Promo promocion, double distancia);
-    public void agregarCanje(double millas);
-    public double millasAcumuladas();
-    public double millasCanjeadas();
-    public double saldo();
-    public String categoría();
+    public void agregarTransferencia(double millas, Usuario usuario);//O(1)
+    public void agregarReferencia(int id);//O(1)
+    public void agregarAcumular(String nombrePromo, Promo promocion, double distancia);//O(1)
+    public void agregarCanje(double millas);//O(1)
+    public Usuario obtenerTransferidorExclusivo();//O(1)
+    public double obtenerMillasAcumuladas();//O(1)
+    public double obtenerMillasCanjeadas();//O(1)
+    public double obtenerSaldo();//O(1)
+    public String obtenerCategoría();//O(1)
+    public int obtenerId();//O(1)
     
 }
 
-interface InterfacePromo {
-    public double factor();
-    public double tope();    
+interface InterfazPromo {
+
+    public double obtenerFactor();//O(1)
+    public double obtenerTope();//O(1)
+
 }
