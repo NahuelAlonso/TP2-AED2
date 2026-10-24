@@ -15,8 +15,9 @@ interface InterfazUsuario {
 }
 
 interface InterfazPromo {
-
-    public double obtenerFactor();//O(1)
-    public double obtenerTope();//O(1)
+    public double factor();//O(1)
+    public double tope();//O(1)  
+    public boolean tieneTope();//O(1)
+    public void consumirMillas(double cantidad);//O(1)
 
 }
