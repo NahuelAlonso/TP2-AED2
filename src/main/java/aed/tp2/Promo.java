@@ -36,8 +36,8 @@ public class Promo implements InterfazPromo {
         return tieneTope;
     }
 
-    public void consumirMillas(double cantidad){
+    public void consumirMillas(double cantidad){//Asumo que cantidad > tope
         if (this.tieneTope)
-            tope -= - cantidad;
+            tope -= cantidad;
     }
 }

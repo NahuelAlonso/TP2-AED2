@@ -51,12 +51,15 @@ public class Usuario implements InterfazUsuario {
 
     public void agregarAcumular(String nombrePromo, Promo promocion, double distancia){//O(1)
         //TODO: Falta, calcular promo y factorCat, restar del tope si es con tope
+        
     }
 
     public void agregarCanje(double millas){//O(1)
+        millasCanjeadas += millas;
+        millas = -millas;
+
         Canje canje = new Canje(millas);
         canjes.agregar(canje);
-        millasCanjeadas += millas;
         nuevaTransacción(canje);
     }
 
