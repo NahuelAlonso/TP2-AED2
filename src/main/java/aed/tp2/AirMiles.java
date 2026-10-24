@@ -1,11 +1,14 @@
 package aed.tp2;
 
+import java.util.ArrayList;
+
 public class AirMiles implements SistemaAirMiles {
     
     Diccionario<Integer, Usuario> usuarios;
     int idElMásAcumulador, idElMásCanjeador;
     double millasAcumuladasMáximas, millasCanjeadasMáximas;
     Diccionario<String, Promo> promociones;
+    HeapsUsuarios heap;
 
     public AirMiles() {//O(1)
         throw new UnsupportedOperationException("Sin implementar");
@@ -82,6 +85,7 @@ public class AirMiles implements SistemaAirMiles {
        return usuarios.obtener(id).categoría();
     }
 
+    
     public int[] rankingMillas(int n) {//O(nlogU)
         throw new UnsupportedOperationException("Sin implementar");
     }
