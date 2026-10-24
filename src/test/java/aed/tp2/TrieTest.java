@@ -1,6 +1,9 @@
 package aed.tp2;
 
 import org.junit.jupiter.api.Test;
+
+import aed.tp2.Estructuras.Trie;
+
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -6,18 +6,18 @@ public class AirMiles implements SistemaAirMiles {
     
     Diccionario<Integer, Usuario> usuarios;
     Usuario elMásAcumulador, elMásCanjeador;
-    Diccionario<String, Promo> promociones;
+    Trie<Promo> promociones;
 
     public AirMiles() {//O(1)
-        usuarios = usuarios.diccionarioVacío();
-        promociones = promociones.diccionarioVacío();
+        usuarios = usuarios.diccionarioVacío();//Se va a tener que modificar
+        promociones = new Trie<Promo>();
     }
 
     public void registrarUsuario(int id) {//O(logU) promedio y O(U)peor
         Usuario usuario = new Usuario();
         if(usuarios.tamaño() == 0){//Cambian "los más" ssi antes no había nadie
-            nuevoMásAcumulador(usuario, id);
-            nuevoMásCanjeador(usuario, id);
+            nuevoMásAcumulador(usuario);
+            nuevoMásCanjeador(usuario);
         }
         usuarios.definirRápido(id, usuario);
     }
@@ -87,11 +87,11 @@ public class AirMiles implements SistemaAirMiles {
     }
 
     public void iniciarPromocion(String nombre, double factor) {//O(L)
-        promociones.definirRápido(nombre, new Promo(factor));
+        promociones.definir(nombre, new Promo(factor));
     }
 
     public void iniciarPromocionConTope(String nombre, double factor, double tope) {//O(L)
-        promociones.definirRápido(nombre, new Promo(factor, tope));
+        promociones.definir(nombre, new Promo(factor, tope));
     }
 
     public void finalizarPromocion(String nombre) {//O(L)
