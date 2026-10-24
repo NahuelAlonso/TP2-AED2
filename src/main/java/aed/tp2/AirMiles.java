@@ -4,7 +4,7 @@ import aed.tp2.Estructuras.*;
 
 public class AirMiles implements SistemaAirMiles {
     
-    Diccionario<Integer, Usuario> usuarios;
+    ABB<Integer, Usuario> usuarios;
     Usuario elMásAcumulador, elMásCanjeador;
     Trie<Promo> promociones;
 
@@ -114,17 +114,24 @@ public class AirMiles implements SistemaAirMiles {
         //Si no, sigo, si sí: agrego el array [id_0, id_1] a la lista enlazada
         //Una vez terminado todo, transformo la lista enlazada en un array en O(U)
 
-        //TODO:Este código está mal por varios motivos, tiene varios errores
         ListaEnlazada<int[]> res = new ListaEnlazada<int[]>();
+        int idActual, idTransferidorExclusivo;
+        Usuario transferidorExclusivo;
+
         for (Usuario usu : usuarios) {
-            int idActual = usu.obtenerId();
-            Usuario transferidorExclusivo = usu.obtenerTransferidorExclusivo();
-            int idTransferidorExclusivo = transferidorExclusivo.obtenerId();
-            if(transferidorExclusivo != null && idActual < idTransferidorExclusivo)
-                if(transferidorExclusivo.obtenerTransferidorExclusivo() != null)
-                    res.agregar({idActual, idTransferidorExclusivo});
+            idActual = usu.obtenerId();
+            transferidorExclusivo = usu.obtenerTransferidorExclusivo();
+            if(transferidorExclusivo != null){
+                idTransferidorExclusivo = transferidorExclusivo.obtenerId();
+                if(idActual < idTransferidorExclusivo)
+                    if(transferidorExclusivo.obtenerTransferidorExclusivo() != null){//Si tiene un transfExc tiene que ser usu
+                        int[] par = {idActual, idTransferidorExclusivo};
+                        res.agregar(par);
+                    }
+            }
         }
-        return res;
+
+        return res.convertirAVector();
     }
 
 

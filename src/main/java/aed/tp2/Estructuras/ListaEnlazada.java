@@ -59,11 +59,14 @@ public class ListaEnlazada<T> implements Secuencia<T> {
         longitud--;
     }
 
-    @Override 
     public void modificarPosicion(int i, T cont){
         Nodo actual = primero;
         for(int n = 0; n < i; n++)
             actual = actual.siguiente;
         actual.contenido = cont;
+    }
+
+    public T[] convertirAVector(){
+        
     }
 }
