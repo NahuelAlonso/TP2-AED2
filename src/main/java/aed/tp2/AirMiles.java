@@ -24,10 +24,10 @@ public class AirMiles implements SistemaAirMiles {
 
     public void registrarUsuarioConReferidor(int idReferido, int idReferidor) {//O(logU) promedio y O(U)peor
         Usuario referidor = usuarios.obtener(idReferidor);
-        Usuario referido = new Usuario(500);
+        Usuario referido = new Usuario(idReferido, idReferidor, 500);
         usuarios.definirRápido(idReferido, referido);
-        referidor.agregarReferencia(idReferido);
-        referido.agregarReferencia(idReferidor);
+        referidor.agregarReferencia(500, idReferido);
+        referido.agregarReferencia(500, idReferidor);
         verificarSiEsElMásAcumulador(referidor);//Sé que el referido no puede ser, ya que tiene menos o igual al referidor
         //No hay canjes, no puede cambiar "el más canjeador"
     }
@@ -114,7 +114,7 @@ public class AirMiles implements SistemaAirMiles {
         //Si no, sigo, si sí: agrego el array [id_0, id_1] a la lista enlazada
         //Una vez terminado todo, transformo la lista enlazada en un array en O(U)
 
-        ListaEnlazada<int[]> res = new ListaEnlazada<int[]>();
+        ListaEnlazada<int[]> listaEnlazada = new ListaEnlazada<int[]>();
         int idActual, idTransferidorExclusivo;
         Usuario transferidorExclusivo;
 
@@ -126,12 +126,12 @@ public class AirMiles implements SistemaAirMiles {
                 if(idActual < idTransferidorExclusivo)
                     if(transferidorExclusivo.obtenerTransferidorExclusivo() != null){//Si tiene un transfExc tiene que ser usu
                         int[] par = {idActual, idTransferidorExclusivo};
-                        res.agregar(par);
+                        listaEnlazada.agregar(par);
                     }
             }
         }
 
-        return res.convertirAVector();
+        return listaEnlazada.convertirAVector();
     }
 
 

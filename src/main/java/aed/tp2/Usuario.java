@@ -21,11 +21,36 @@ public class Usuario implements InterfazUsuario {
     ListaEnlazada<Canje> canjes;
 
 
-    public Usuario(){
+    public Usuario(int id){
+        this.id = id;
+        millasAcumuladas = 0;
+        millasCanjeadas = 0;
+        saldo = 0;
         alMenosUnaTransferencia = false;
+        transferidorExclusivo = null;
+        transferencias = new ListaEnlazada<Transferencia>();
+        referencias = new ListaEnlazada<Referencia>();
+        acumulaciones = new ListaEnlazada<Acumulación>();
+        canjes = new ListaEnlazada<Canje>();
+
+        actualizarFactorCategoría();//Podría poner factorCat = 1, pero es más escalable de esta forma
     }
-    public Usuario(int millas){
+    public Usuario(int id, int idReferidor, double millas){
+        this.id = id;
+        millasCanjeadas = 0;
         alMenosUnaTransferencia = false;
+        transferidorExclusivo = null;
+        transferencias = new ListaEnlazada<Transferencia>();
+        referencias = new ListaEnlazada<Referencia>();
+        acumulaciones = new ListaEnlazada<Acumulación>();
+        canjes = new ListaEnlazada<Canje>();
+        
+        //Cambian del usuario nuevo sin referidor
+        millasAcumuladas = millas;
+        saldo = millas;
+        referencias.agregar(new Referencia(millas, idReferidor));
+        
+        actualizarFactorCategoría();//Podría poner factorCat = 1, pero es más escalable de esta forma
     }
 
     public void agregarTransferencia(double millas, Usuario usuario){//O(1)
@@ -43,8 +68,8 @@ public class Usuario implements InterfazUsuario {
         alMenosUnaTransferencia = true;
     }
 
-    public void agregarReferencia(int id){//O(1)
-        Referencia referencia = new Referencia(500, id);
+    public void agregarReferencia(int id, double millas){//O(1)
+        Referencia referencia = new Referencia(millas, id);
         referencias.agregar(referencia);
         nuevaTransacción(referencia);
     }
