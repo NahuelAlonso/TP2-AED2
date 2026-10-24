@@ -36,8 +36,10 @@ public class Promo implements InterfazPromo {
         return tieneTope;
     }
 
-    public void consumirMillas(double cantidad){//Asumo que cantidad > tope
+    public void consumirMillas(double cantidad){
         if (this.tieneTope)
             tope -= cantidad;
+        //Que pasa si cantidad > tope?
+        //Si el tope se vuelve 0, la promo pasa a ser una promo default (factor 1 y sin tope)
     }
 }

@@ -49,9 +49,23 @@ public class Usuario implements InterfazUsuario {
         nuevaTransacción(referencia);
     }
 
-    public void agregarAcumular(String nombrePromo, Promo promocion, double distancia){//O(1)
-        //TODO: Falta, calcular promo y factorCat, restar del tope si es con tope
+    public void agregarAcumular(String nombrePromo, Promo promoción, double distancia){//O(1)
+        double millas, millasSinTope;
+        double factorPromoción = promoción.factor();
+        double tope = promoción.tope();
+        Acumulación acumulación;
+
+        millasSinTope = distancia * factorCategoría * factorPromoción;
+        promoción.consumirMillas(millasSinTope);
         
+        if(promoción.tieneTope() && tope < millasSinTope)
+            millas = tope + factorCategoría * (distancia - tope) / (factorPromoción * factorCategoría);
+        else
+            millas = millasSinTope;
+        
+        acumulación = new Acumulación(nombrePromo, factorPromoción, millas, distancia);
+        acumulaciones.agregar(acumulación);
+        nuevaTransacción(acumulación);
     }
 
     public void agregarCanje(double millas){//O(1)
@@ -65,16 +79,28 @@ public class Usuario implements InterfazUsuario {
 
     private void nuevaTransacción(Transacción tr){//Todas las transacciones deben sumarse al saldo y a mA si son >0
         double millas = tr.obtenerMillas();
-        if(millas > 0)
+        if(millas > 0){
             millasAcumuladas += millas;
+            actualizarFactorCategoría();
+        }
 
         saldo += millas;
     }
     
+    private void actualizarFactorCategoría(){
+        if(millasAcumuladas < 10000)
+            factorCategoría = 1;
+        else if (millasAcumuladas < 50000)
+            factorCategoría = 1.5;
+        else if (millasAcumuladas < 1000000)
+            factorCategoría = 2;
+        else
+            factorCategoría = 0;
+    }
+
     public Usuario obtenerTransferidorExclusivo(){//O(1)
         return transferidorExclusivo;//Es null si se transfirió a varios usuarios o si nunca se transfirió
     }
-
     public double obtenerMillasAcumuladas(){//O(1)
         return millasAcumuladas;
     }
