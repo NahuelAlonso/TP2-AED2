@@ -1,17 +1,13 @@
 package aed.tp2;
 
 import aed.tp2.Estructuras.*;
-import java.util.ArrayList;
-import aed.tp2.Estructuras.Diccionario;
-import aed.tp2.Estructuras.HeapsUsuarios;
 
 public class AirMiles implements SistemaAirMiles {
     
     ABB<Integer, Usuario> usuarios;
     Usuario elMásAcumulador, elMásCanjeador;
     Trie<Promo> promociones;
-    HeapsUsuarios heap;
-    
+
     public AirMiles() {//O(1)
         usuarios = usuarios.diccionarioVacío();//Se va a tener que modificar
         promociones = new Trie<Promo>();
