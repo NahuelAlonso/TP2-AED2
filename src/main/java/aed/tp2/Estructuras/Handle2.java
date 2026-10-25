@@ -1,4 +1,4 @@
-package aed.tp2;
+package aed.tp2.Estructuras;
 
 interface Handle<T>{    
     /**

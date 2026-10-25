@@ -1,7 +1,9 @@
-package aed.tp2;
+package aed.tp2.Estructuras;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import aed.tp2.Usuario;
 
 public class HeapsUsuarios {
     private ArrayList<HandleHeaps> heap;

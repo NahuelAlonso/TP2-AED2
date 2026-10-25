@@ -1,5 +1,7 @@
 package aed.tp2;
 
+import aed.tp2.Estructuras.Secuencia;
+
 public class ListaEnlazada<T> implements Secuencia<T> {
 
     private Nodo primero;

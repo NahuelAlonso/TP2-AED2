@@ -2,6 +2,9 @@ package aed.tp2;
 
 import java.util.ArrayList;
 
+import aed.tp2.Estructuras.Diccionario;
+import aed.tp2.Estructuras.HeapsUsuarios;
+
 public class AirMiles implements SistemaAirMiles {
     
     Diccionario<Integer, Usuario> usuarios;

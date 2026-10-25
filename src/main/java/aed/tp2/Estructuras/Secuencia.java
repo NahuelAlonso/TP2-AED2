@@ -1,4 +1,4 @@
-package aed.tp2;
+package aed.tp2.Estructuras;
 
 public interface Secuencia<T> {
 
