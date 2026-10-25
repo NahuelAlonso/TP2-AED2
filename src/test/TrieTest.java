@@ -1,4 +1,4 @@
-package aed.tp2;
+package aed;
 
 import org.junit.jupiter.api.Test;
 
