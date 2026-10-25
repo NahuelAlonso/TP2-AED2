@@ -1,4 +1,4 @@
-package aed.tp2.Estructuras;
+package aed.tp2;
 
 public class ListaEnlazada<T> implements Secuencia<T> {
 

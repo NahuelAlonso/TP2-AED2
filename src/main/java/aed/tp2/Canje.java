@@ -1,4 +1,4 @@
-package aed.tp2.Transacciones;
+package aed.tp2;
 
 public class Canje implements Transacción{
     double precioEnMillas;

@@ -1,4 +1,4 @@
-package aed.tp2.Estructuras;
+package aed.tp2;
 
 public interface Diccionario<K, V> {
     public boolean está(V v);
