@@ -97,16 +97,4 @@ public class Trie<T> implements Diccionario<String, T> {
     public int tamaño (){//Devuelve la cantidad de palabras que hay
         return tamaño;
     }
-
-    public void definirRápido(String k, T v){//No tiene sentido definirRápido
-        definir(k, v);
-    }
-
-    public boolean está(T v){//Creo que no se usa, verifica que dado un valor busca una promo que 
-        throw new UnsupportedOperationException("Sin implementar");//Lo tenga
-    }
-
-    public boolean igualdad(Diccionario<String,T> dict){//Tampoco se usa, compara dos diccionarios de promo exactamente iguales
-        throw new UnsupportedOperationException("Sin implementar");
-    }
 }

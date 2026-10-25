@@ -9,23 +9,23 @@ public class AirMiles implements SistemaAirMiles {
     Trie<Promo> promociones;
 
     public AirMiles() {//O(1)
-        usuarios = usuarios.diccionarioVacío();//Se va a tener que modificar
+        usuarios = new ABB<Integer, Usuario>();
         promociones = new Trie<Promo>();
     }
 
     public void registrarUsuario(int id) {//O(logU) promedio y O(U)peor
-        Usuario usuario = new Usuario();
-        if(usuarios.tamaño() == 0){//Cambian "los más" ssi antes no había nadie
+        Usuario usuario = new Usuario(id);
+        if(usuarios.tamaño() == 0){//Cambian "los más" ssi no había nadie antes
             nuevoMásAcumulador(usuario);
             nuevoMásCanjeador(usuario);
         }
-        usuarios.definirRápido(id, usuario);
+        usuarios.definir(id, usuario);
     }
 
     public void registrarUsuarioConReferidor(int idReferido, int idReferidor) {//O(logU) promedio y O(U)peor
         Usuario referidor = usuarios.obtener(idReferidor);
         Usuario referido = new Usuario(idReferido, idReferidor, 500);
-        usuarios.definirRápido(idReferido, referido);
+        usuarios.definir(idReferido, referido);
         referidor.agregarReferencia(500, idReferido);
         referido.agregarReferencia(500, idReferidor);
         verificarSiEsElMásAcumulador(referidor);//Sé que el referido no puede ser, ya que tiene menos o igual al referidor
@@ -99,11 +99,11 @@ public class AirMiles implements SistemaAirMiles {
     }
 
     public int elMasAcumulador() {//O(1)
-        return idElMásAcumulador;
+        return elMásAcumulador.obtenerId();
     }
 
     public int elMasCanjeador() {//O(1)
-        return idElMásCanjeador;
+        return elMásCanjeador.obtenerId();
     }
 
     public int[][] paresTransferidoresExclusivos() {//O(U)
