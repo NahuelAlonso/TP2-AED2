@@ -43,14 +43,16 @@ public class Usuario implements InterfazUsuario {
         Transferencia transferencia = new Transferencia(millas, usuario.obtenerId());
         transferencias.agregar(transferencia);
         
-        nuevaTransacción(transferencia);
+        boolean sumaCanjeadas = millas < 0;
+
+        nuevaTransacción(transferencia, sumaCanjeadas, false);//Nunca suma a acumuladas, puede sumar a canjeadas si resta
         alMenosUnaTransferencia = true;
     }
 
     public void agregarReferencia(double millas, int id){//O(1)
         Referencia referencia = new Referencia(millas, id);
         referencias.agregar(referencia);
-        nuevaTransacción(referencia);
+        nuevaTransacción(referencia, false, true);
     }
 
     public void agregarAcumular(String nombrePromo, Promo promoción, double distancia){//O(1)
@@ -69,7 +71,7 @@ public class Usuario implements InterfazUsuario {
         
         acumulación = new Acumulación(nombrePromo, factorPromoción, millas, distancia);
         acumulaciones.agregar(acumulación);
-        nuevaTransacción(acumulación);
+        nuevaTransacción(acumulación, false, true);
     }
 
     public void agregarCanje(double millas){//O(1)
@@ -77,18 +79,17 @@ public class Usuario implements InterfazUsuario {
 
         Canje canje = new Canje(millas);
         canjes.agregar(canje);
-        nuevaTransacción(canje);
+        nuevaTransacción(canje, true, false);
     }
 
-    private void nuevaTransacción(Transacción tr){//Todas las transacciones deben sumarse al saldo, a mA si son >0 y a mT si son <0
+    private void nuevaTransacción(Transacción tr, boolean sumaCanjeadas, boolean sumaAcumuladas){
         double millas = tr.obtenerMillas();
-        if(millas > 0){
+        if(sumaCanjeadas)
+            millasCanjeadas += Math.abs(millas);
+        if(sumaAcumuladas)
             millasAcumuladas += millas;
-            actualizarFactorCategoría();
-        }
-        else
-            millasCanjeadas += Math.abs(millas);//Cuentan las transfe y los canjes
-
+        
+        actualizarFactorCategoría();
         saldo += millas;
     }
     
@@ -115,6 +116,7 @@ public class Usuario implements InterfazUsuario {
     public double obtenerSaldo(){//O(1)
         return saldo;
     }
+    
     public String obtenerCategoría(){//O(1)
         actualizarFactorCategoría();
         String res = "Error";
@@ -127,9 +129,10 @@ public class Usuario implements InterfazUsuario {
         if(factorCategoría == 0)
             res =  "Platino";
 
-        System.err.println(factorCategoría + ", " + res );
+        //System.err.println(factorCategoría + ", " + res );
         return res;
     }
+    
     public int obtenerId(){
         return id;
     }
