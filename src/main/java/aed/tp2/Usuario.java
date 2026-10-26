@@ -1,11 +1,7 @@
 package aed.tp2;
 
-import aed.tp2.Estructuras.ListaEnlazada;
-import aed.tp2.Transacciones.Acumulación;
-import aed.tp2.Transacciones.Canje;
-import aed.tp2.Transacciones.Referencia;
-import aed.tp2.Transacciones.Transacción;
-import aed.tp2.Transacciones.Transferencia;
+import aed.tp2.Estructuras.*;
+import aed.tp2.Transacciones.*;
 
 public class Usuario implements InterfazUsuario {
     int id;
@@ -35,23 +31,6 @@ public class Usuario implements InterfazUsuario {
 
         actualizarFactorCategoría();//Podría poner factorCat = 1, pero es más escalable de esta forma
     }
-    public Usuario(int id, int idReferidor, double millas){
-        this.id = id;
-        millasCanjeadas = 0;
-        alMenosUnaTransferencia = false;
-        transferidorExclusivo = null;
-        transferencias = new ListaEnlazada<Transferencia>();
-        referencias = new ListaEnlazada<Referencia>();
-        acumulaciones = new ListaEnlazada<Acumulación>();
-        canjes = new ListaEnlazada<Canje>();
-        
-        //Cambian del usuario nuevo sin referidor
-        millasAcumuladas = millas;
-        saldo = millas;
-        referencias.agregar(new Referencia(millas, idReferidor));
-        
-        actualizarFactorCategoría();//Podría poner factorCat = 1, pero es más escalable de esta forma
-    }
 
     public void agregarTransferencia(double millas, Usuario usuario){//O(1)
         if(!alMenosUnaTransferencia)//Si es la primera transfe, sí o sí va a tener transfExclusivo
@@ -68,7 +47,7 @@ public class Usuario implements InterfazUsuario {
         alMenosUnaTransferencia = true;
     }
 
-    public void agregarReferencia(int id, double millas){//O(1)
+    public void agregarReferencia(double millas, int id){//O(1)
         Referencia referencia = new Referencia(millas, id);
         referencias.agregar(referencia);
         nuevaTransacción(referencia);
@@ -94,7 +73,6 @@ public class Usuario implements InterfazUsuario {
     }
 
     public void agregarCanje(double millas){//O(1)
-        millasCanjeadas += millas;
         millas = -millas;
 
         Canje canje = new Canje(millas);
@@ -102,12 +80,14 @@ public class Usuario implements InterfazUsuario {
         nuevaTransacción(canje);
     }
 
-    private void nuevaTransacción(Transacción tr){//Todas las transacciones deben sumarse al saldo y a mA si son >0
+    private void nuevaTransacción(Transacción tr){//Todas las transacciones deben sumarse al saldo, a mA si son >0 y a mT si son <0
         double millas = tr.obtenerMillas();
         if(millas > 0){
             millasAcumuladas += millas;
             actualizarFactorCategoría();
         }
+        else
+            millasCanjeadas += Math.abs(millas);//Cuentan las transfe y los canjes
 
         saldo += millas;
     }
@@ -136,12 +116,15 @@ public class Usuario implements InterfazUsuario {
         return saldo;
     }
     public String obtenerCategoría(){//O(1)
-        switch (factorCategoría) {
-            case 1: return "Bronce";
-            case 1.5: return "Plata";
-            case 2: return "Oro";
-            case 0: return "Platino";
-        }
+        if(factorCategoría == 1)
+            return "Bronce";
+        if(factorCategoría == 1.5)
+            return "Plata";
+        if(factorCategoría == 2)
+            return "Oro";
+        if(factorCategoría == 0)
+            return "Platino";
+        throw new UnsupportedOperationException("El factor de categoría es " + Double.toString(factorCategoría));
     }
     public int obtenerId(){
         return id;

@@ -2,7 +2,7 @@ package aed.tp2;
 interface InterfazUsuario {
 
     public void agregarTransferencia(double millas, Usuario usuario);//O(1)
-    public void agregarReferencia(int id);//O(1)
+    public void agregarReferencia(double millas, int id);//O(1)
     public void agregarAcumular(String nombrePromo, Promo promocion, double distancia);//O(1)
     public void agregarCanje(double millas);//O(1)
     public Usuario obtenerTransferidorExclusivo();//O(1)

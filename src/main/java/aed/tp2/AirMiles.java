@@ -7,10 +7,16 @@ public class AirMiles implements SistemaAirMiles {
     ABB<Integer, Usuario> usuarios;
     Usuario elMásAcumulador, elMásCanjeador;
     Trie<Promo> promociones;
+    
 
     public AirMiles() {//O(1)
         usuarios = new ABB<Integer, Usuario>();
+
+        elMásAcumulador = new Usuario(-1);
+        elMásCanjeador = new Usuario(-1);
+
         promociones = new Trie<Promo>();
+        promociones.definir("NoPromo", new Promo());
     }
 
     public void registrarUsuario(int id) {//O(logU) promedio y O(U)peor
@@ -24,7 +30,7 @@ public class AirMiles implements SistemaAirMiles {
 
     public void registrarUsuarioConReferidor(int idReferido, int idReferidor) {//O(logU) promedio y O(U)peor
         Usuario referidor = usuarios.obtener(idReferidor);
-        Usuario referido = new Usuario(idReferido, idReferidor, 500);
+        Usuario referido = new Usuario(idReferido);
         usuarios.definir(idReferido, referido);
         referidor.agregarReferencia(500, idReferido);
         referido.agregarReferencia(500, idReferidor);
@@ -83,7 +89,12 @@ public class AirMiles implements SistemaAirMiles {
     }
 
     public int[] rankingMillas(int n) {//O(nlogU)//TODO: Falta
-        throw new UnsupportedOperationException("Sin implementar");
+        int[] array;
+        n = Math.min(n, usuarios.tamaño());
+        array = new int[n];
+        for (int i = 0; i < n; i++)
+            array[i] = usuariosPorMillas.maximo();
+        return array;
     }
 
     public void iniciarPromocion(String nombre, double factor) {//O(L)
