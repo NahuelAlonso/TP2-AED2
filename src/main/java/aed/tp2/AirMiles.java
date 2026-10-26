@@ -142,7 +142,7 @@ public class AirMiles implements SistemaAirMiles {
             }
         }
 
-        return listaEnlazada.convertirAVector();
+        return listaEnlazada.convertirAVector(new int[listaEnlazada.longitud()][]);
     }
 
 
