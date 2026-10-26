@@ -141,8 +141,13 @@ public class AirMiles implements SistemaAirMiles {
                     }
             }
         }
-
-        return listaEnlazada.convertirAVector();
+        int [][] res = new int[listaEnlazada.longitud()][];
+        int i = 0;
+        for (int[] par : listaEnlazada){ // Paso los pares a un arreglo, O(longitud). Se mantiene O(U)
+            res[i] = par;
+            i++;
+        }
+        return res;
     }
 
 

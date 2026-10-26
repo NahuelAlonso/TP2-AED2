@@ -1,6 +1,8 @@
 package aed.tp2.Estructuras;
 
-public class ListaEnlazada<T> implements Secuencia<T> {
+import java.util.Iterator;
+
+public class ListaEnlazada<T> implements Secuencia<T>, Iterable<T> {
 
     private Nodo primero;
     private Nodo ultimo;
@@ -66,7 +68,25 @@ public class ListaEnlazada<T> implements Secuencia<T> {
         actual.contenido = cont;
     }
 
-    public T[] convertirAVector(){
-        
+    private class Iterador implements Iterator<T>{
+        private Nodo actual = primero;
+
+        @Override 
+        public boolean hasNext(){
+            return actual != null;
+        }
+
+        @Override 
+        public T next(){
+            T cont = actual.contenido;
+            actual = actual.siguiente;
+            return cont;
+        }
+
+    }
+
+    @Override 
+    public Iterator<T> iterator(){
+        return new Iterador();
     }
 }
