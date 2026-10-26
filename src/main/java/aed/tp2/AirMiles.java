@@ -1,5 +1,8 @@
 package aed.tp2;
 
+import java.util.Comparator;
+import java.util.PriorityQueue;
+
 import aed.tp2.Estructuras.*;
 
 public class AirMiles implements SistemaAirMiles {
@@ -7,7 +10,8 @@ public class AirMiles implements SistemaAirMiles {
     ABB<Integer, Usuario> usuarios;
     Usuario elMásAcumulador, elMásCanjeador;
     Trie<Promo> promociones;
-    
+    PriorityQueue<Usuario> maxHeapUsuarios;
+
 
     public AirMiles() {//O(1)
         usuarios = new ABB<Integer, Usuario>();
@@ -17,6 +21,9 @@ public class AirMiles implements SistemaAirMiles {
 
         promociones = new Trie<Promo>();
         promociones.definir("NoPromo", new Promo());
+
+        Comparator<Usuario> comparator = (a,b) -> Double.compare(a.obtenerSaldo(), b.obtenerSaldo());//Ojo! Puede estar al revés
+        maxHeapUsuarios = new PriorityQueue<>(comparator);
     }
 
     public void registrarUsuario(int id) {//O(logU) promedio y O(U)peor
@@ -26,6 +33,7 @@ public class AirMiles implements SistemaAirMiles {
             nuevoMásCanjeador(usuario);
         }
         usuarios.definir(id, usuario);
+        maxHeapUsuarios.add(usuario);
     }
 
     public void registrarUsuarioConReferidor(int idReferido, int idReferidor) {//O(logU) promedio y O(U)peor
@@ -93,7 +101,7 @@ public class AirMiles implements SistemaAirMiles {
         n = Math.min(n, usuarios.tamaño());
         array = new int[n];
         for (int i = 0; i < n; i++)
-            array[i] = usuariosPorMillas.maximo();
+            array[i] = maxHeapUsuarios.poll().obtenerId();
         return array;
     }
 
