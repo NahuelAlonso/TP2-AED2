@@ -66,7 +66,13 @@ public class ListaEnlazada<T> implements Secuencia<T> {
         actual.contenido = cont;
     }
 
-    public T[] convertirAVector(){
-        
+    public T[] convertirAVector(T[] vector){
+        Nodo actual = primero;
+        int i = 0;
+        while(actual != null){
+            vector[i++] = actual.contenido;
+            actual = actual.siguiente;
+        }
+        return vector;
     }
 }
