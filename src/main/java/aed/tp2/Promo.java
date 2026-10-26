@@ -37,12 +37,13 @@ public class Promo implements InterfazPromo {
     }
 
     public void consumirMillas(double cantidad){
-        if (this.tieneTope)
+        if (this.tieneTope){
             tope -= cantidad;
-        if (this.tope <= 0){
-            this.tope = 0;
-            factor = 1;
-            tieneTope = false;
+            if (this.tope <= 0){
+                this.tope = 0;
+                factor = 1;
+                tieneTope = false;
+            }
         }
     }
 }
