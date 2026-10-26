@@ -116,17 +116,37 @@ public class Usuario implements InterfazUsuario {
         return saldo;
     }
     public String obtenerCategoría(){//O(1)
+        actualizarFactorCategoría();
+        String res = "Error";
         if(factorCategoría == 1)
-            return "Bronce";
+            res = "Bronce";
         if(factorCategoría == 1.5)
-            return "Plata";
+            res = "Plata";
         if(factorCategoría == 2)
-            return "Oro";
+            res =  "Oro";
         if(factorCategoría == 0)
-            return "Platino";
-        throw new UnsupportedOperationException("El factor de categoría es " + Double.toString(factorCategoría));
+            res =  "Platino";
+
+        System.err.println(factorCategoría + ", " + res );
+        return res;
     }
     public int obtenerId(){
         return id;
+    }
+
+    @Override 
+    public String toString(){
+        String res = "";
+        res += "id: " + id + "\n";
+        res += "fC: " + factorCategoría +"\n";
+        res += "mA: " + millasAcumuladas + "\n";
+        res += "MC: " + millasCanjeadas + "\n";
+        res += "saldo: " + saldo + "\n";
+        res += "caj: " + canjes.toString() + "\n";
+        res += "tra: " + transferencias.toString() + "\n";
+        res += "acc: " + acumulaciones.toString() + "\n";
+        res += "ref: " + referencias.toString() + "\n";
+
+        return res;
     }
 }

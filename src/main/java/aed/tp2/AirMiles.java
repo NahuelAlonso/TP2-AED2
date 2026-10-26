@@ -1,7 +1,6 @@
 package aed.tp2;
 
-import java.util.Comparator;
-import java.util.PriorityQueue;
+import java.util.*;
 
 import aed.tp2.Estructuras.*;
 
@@ -22,7 +21,7 @@ public class AirMiles implements SistemaAirMiles {
         promociones = new Trie<Promo>();
         promociones.definir("NoPromo", new Promo());
 
-        Comparator<Usuario> comparator = (a,b) -> Double.compare(a.obtenerSaldo(), b.obtenerSaldo());//Ojo! Puede estar al revés
+        Comparator<Usuario> comparator = (a,b) -> Double.compare(b.obtenerSaldo(), a.obtenerSaldo());
         maxHeapUsuarios = new PriorityQueue<>(comparator);
     }
 
@@ -42,41 +41,22 @@ public class AirMiles implements SistemaAirMiles {
         usuarios.definir(idReferido, referido);
         referidor.agregarReferencia(500, idReferido);
         referido.agregarReferencia(500, idReferidor);
-        verificarSiEsElMásAcumulador(referidor);//Sé que el referido no puede ser, ya que tiene menos o igual al referidor
-        //No hay canjes, no puede cambiar "el más canjeador"
-    }
 
-    private void verificarSiEsElMásAcumulador(Usuario usuario){
-        if(usuario.obtenerMillasAcumuladas() > elMásAcumulador.obtenerMillasAcumuladas())
-            nuevoMásAcumulador(usuario);
-    }
-
-    private void nuevoMásAcumulador(Usuario usuario){
-        elMásAcumulador = usuario;
+        maxHeapUsuarios.add(referido);
+        seModificóUsuario(referidor);
     }
 
     public void acumularMillas(int id, double distancia, String nombrePromo) {//O(logU + L) promedio y O(U + L)peor
         Promo promoción = promociones.obtener(nombrePromo);
         Usuario usuario = usuarios.obtener(id);
         usuario.agregarAcumular(nombrePromo, promoción, distancia);
-        verificarSiEsElMásAcumulador(usuario);
-        //No hay canjes, no puede cambiar "el más canjeador"
+        seModificóUsuario(usuario);
     }
 
     public void canjearMillas(int id, double cantidad) {//O(logU) promedio y O(U)peor
         Usuario usuario = usuarios.obtener(id);
         usuario.agregarCanje(cantidad);
-        verificarSiEsElMásCanjeador(usuario);
-        //No hay acumulaciones, no puede cambiar "el más acumulador"
-    }
-
-    private void verificarSiEsElMásCanjeador(Usuario usuario){
-        if(usuario.obtenerMillasCanjeadas() > elMásCanjeador.obtenerMillasCanjeadas())
-            nuevoMásCanjeador(usuario);
-    }
-
-    private void nuevoMásCanjeador(Usuario usuario){
-        elMásCanjeador = usuario;
+        seModificóUsuario(usuario);
     }
 
     public void transferirMillas(int idOrigen, int idDestino, double cantidad) {//O(logU) promedio y O(U)peor
@@ -84,8 +64,8 @@ public class AirMiles implements SistemaAirMiles {
         Usuario usuarioDestino = usuarios.obtener(idDestino);
         usuarioDestino.agregarTransferencia(cantidad, usuarioOrigen);//Le suman
         usuarioOrigen.agregarTransferencia(-cantidad, usuarioDestino);//Le restan
-        verificarSiEsElMásAcumulador(usuarioDestino);
-        //No necesito ver si es el más canjeador, porque las transferencias no cuentan para esto
+        seModificóUsuario(usuarioDestino);
+        seModificóUsuario(usuarioOrigen);
     }
 
     public double consultarSaldo(int id) {//O(logU) promedio y O(U)peor
@@ -93,16 +73,22 @@ public class AirMiles implements SistemaAirMiles {
     }
 
     public String consultarCategoria(int id) {//O(logU) promedio y O(U)peor
-       return usuarios.obtener(id).obtenerCategoría();
+        return usuarios.obtener(id).obtenerCategoría();
     }
 
-    public int[] rankingMillas(int n) {//O(nlogU)//TODO: Falta
-        int[] array;
+    public int[] rankingMillas(int n) {//O(nlogU)
+        //TODO: También se puede hacer con otro heaps que vaya sumando los que se eliminan, luego asignarle al mHU, el heap nuevo
         n = Math.min(n, usuarios.tamaño());
-        array = new int[n];
+        int[] ids = new int[n];
+        Usuario[] usuarios = new Usuario[n];
+        for (int i = 0; i < n; i++){
+            Usuario usu = maxHeapUsuarios.poll();
+            ids[i] = usu.obtenerId();
+            usuarios[i] = usu;
+        }
         for (int i = 0; i < n; i++)
-            array[i] = maxHeapUsuarios.poll().obtenerId();
-        return array;
+            maxHeapUsuarios.add(usuarios[i]);
+        return ids;
     }
 
     public void iniciarPromocion(String nombre, double factor) {//O(L)
@@ -153,5 +139,32 @@ public class AirMiles implements SistemaAirMiles {
         return listaEnlazada.convertirAVector(new int[listaEnlazada.longitud()][]);
     }
 
+    private void seModificóUsuario(Usuario usuario){
+        verificarSiEsElMásAcumulador(usuario);
+        verificarSiEsElMásCanjeador(usuario);
+        maxHeapUsuarios.remove(usuario);//Debería ser O(logU)
+        maxHeapUsuarios.add(usuario);//Debería ser O(logU)
+    }
 
+    private void verificarSiEsElMásAcumulador(Usuario usuario){
+        if(usuario.obtenerMillasAcumuladas() > elMásAcumulador.obtenerMillasAcumuladas())
+            nuevoMásAcumulador(usuario);
+    }
+
+    private void nuevoMásAcumulador(Usuario usuario){
+        elMásAcumulador = usuario;
+    }
+
+        private void verificarSiEsElMásCanjeador(Usuario usuario){
+        if(usuario.obtenerMillasCanjeadas() > elMásCanjeador.obtenerMillasCanjeadas())
+            nuevoMásCanjeador(usuario);
+    }
+
+    private void nuevoMásCanjeador(Usuario usuario){
+        elMásCanjeador = usuario;
+    }
+
+    public Usuario obtenerUsuario(int id){
+        return usuarios.obtener(id);
+    }
 }

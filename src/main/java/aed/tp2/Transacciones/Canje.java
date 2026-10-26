@@ -10,4 +10,8 @@ public class Canje implements Transacción{
     public double obtenerMillas(){
         return precioEnMillas;
     }
+    
+    public String toString(){
+        return Double.toString(precioEnMillas);
+    }
 }

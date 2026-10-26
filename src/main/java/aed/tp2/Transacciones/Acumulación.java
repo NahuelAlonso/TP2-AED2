@@ -16,4 +16,8 @@ public class Acumulación implements Transacción{
     public double obtenerMillas(){
         return millasObtenidas;
     }
+    
+    public String toString(){
+        return Double.toString(millasObtenidas);
+    }
 }

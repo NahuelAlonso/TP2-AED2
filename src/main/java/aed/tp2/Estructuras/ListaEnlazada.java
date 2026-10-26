@@ -66,7 +66,7 @@ public class ListaEnlazada<T> implements Secuencia<T> {
         actual.contenido = cont;
     }
 
-    public T[] convertirAVector(T[] vector){
+    public T[] convertirAVector(T[] vector){//TODO: No tiene sentido que tome un parámetro
         Nodo actual = primero;
         int i = 0;
         while(actual != null){
@@ -74,5 +74,15 @@ public class ListaEnlazada<T> implements Secuencia<T> {
             actual = actual.siguiente;
         }
         return vector;
+    }
+
+    public String toString(){
+        String res = "";
+        Nodo actual = primero;
+        while (actual != null){
+            res += actual.contenido.toString() + ", ";
+            actual = actual.siguiente;
+        }
+        return res;
     }
 }

@@ -12,4 +12,8 @@ public class Transferencia implements Transacción{
     public double obtenerMillas(){
         return millas;
     }
+
+    public String toString(){
+        return Double.toString(millas);
+    }
 }

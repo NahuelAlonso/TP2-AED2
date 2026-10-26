@@ -13,4 +13,8 @@ public class Referencia implements Transacción{
     public double obtenerMillas(){
         return millas;
     }
+
+    public String toString(){
+        return Double.toString(millas);
+    }
 }
