@@ -8,9 +8,6 @@ import aed.tp2.Usuario;
 public class HeapsUsuarios {
     private ArrayList<HandleHeaps> heap;
 
-    public ArrayList<HandleHeaps> crearHeap(){
-        throw new UnsupportedOperationException("Sin implementar");
-    }
 
     public HeapsUsuarios(){
         this.heap = new ArrayList<>();
@@ -25,38 +22,38 @@ public class HeapsUsuarios {
             this.usuario = usuario;
         }
 
-        /**
-         * Devuelve el valor del elemento
-         * 
-         */
+    
+        //Devuelve el valor del elemento
         public Usuario valor(){
             return usuario;
         }
     
-        /**
-         * Elimina al elemento de la colección
-        * 
-        */
+        
+        //Elimina al elemento de la colección
         public void eliminar(){
-            throw new UnsupportedOperationException("Sin implementar");
-        }
+            if (posicion >= 0 && posicion < heap.size()){
+                eliminarH(posicion);
+            }
+        }   
 
-        /**
-        * Modifica al elemento de la colección y su orden (de ser necesario)
-        * 
-        */
+ 
+        //Modifica al elemento de la colección y su orden (de ser necesario)
         public void modificar(Usuario v){
-            throw new UnsupportedOperationException("Sin implementar");
+            this.usuario = v;
+            acomodar(posicion);
         }
 
-        /**
-        * Devuelve si el valor que representa el Handle es equivalente al que representa otro.
-        * 
-        */
+      
+        //Devuelve si el valor que representa el Handle es equivalente al que representa otro.
         public boolean equals(Handle<Usuario> u){
-            throw new UnsupportedOperationException("Sin implementar");
+            return u != null && this.usuario.obtenerId() == u.valor().obtenerId();
         }
     
+    }
+    
+    
+    private double saldo(int i) {
+        return heap.get(i).usuario.obtenerSaldo(); 
     }
 
     public int tamaño() { 
@@ -70,25 +67,67 @@ public class HeapsUsuarios {
         return h;
     }
 
-    public List<Integer> ranking(int n){
-        throw new UnsupportedOperationException("Sin implementar");
-
+    private void acomodar(int i) {
+        int padre = (i-1)/2;
+        if (i > 0 && saldo(i)>saldo(padre)){
+            subir(i);
+        }else{
+            bajar(i);
+        }
     }
 
-    private void eliminar(int i) {
-        throw new UnsupportedOperationException("Sin implementar");
+
+    private void eliminarH(int i) {
+        int ultimo = heap.size()-1;
+        if (i != ultimo ){
+            intercambiar(i, ultimo);
+            heap.get(ultimo).posicion = -1;
+            heap.remove(ultimo);
+        }
+        acomodar(i);
     }
-    private int subir(int i) {
-        throw new UnsupportedOperationException("Sin implementar");
+
+    private void subir(int i) {
+        int padre = (i-1)/2;
+        while (i>0 && saldo(i) > saldo(padre)){
+            padre = (i-1)/2;
+            intercambiar(i, padre);
+            i = padre;
+        }
     }
 
     private void bajar(int i) {
-        throw new UnsupportedOperationException("Sin implementar");
+        int tamaño = heap.size();
+        int izq = 2 * i + 1;
+        int der = 2 * i + 2;
+        int mayor = i;
+        boolean listo = false;
+        while (!listo) {
+            izq = 2 * i + 1;
+            der = 2 * i + 2;
+            mayor = i;
+            if (izq < tamaño && saldo(izq)>saldo(der) && saldo(izq)>saldo(mayor)){
+                mayor = izq;
+            } 
+            if (der < tamaño && saldo(der)>saldo(izq) && saldo(der)>saldo(mayor)){
+                mayor = der;
+            }
+            if (mayor == i){
+                listo = true;
+            }else{
+                intercambiar(i, mayor);
+                i = mayor;
+            }
+        }
     }
 
     private void intercambiar(int i, int j) {
-        throw new UnsupportedOperationException("Sin implementar");
-
+        HandleHeaps a = heap.get(i);
+        HandleHeaps b = heap.get(j);
+        heap.set(i,b);
+        b.posicion = i;
+        heap.set(j,a);
+        a.posicion = j;
     }
     
 
