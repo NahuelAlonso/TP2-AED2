@@ -9,15 +9,18 @@ public class Usuario implements InterfazUsuario {
     double millasAcumuladas;
     double millasCanjeadas;
     double saldo;
-    boolean alMenosUnaTransferencia;//Se puede reemplazar por transferencias.longitud() == 0, parece más prolijo así
+    boolean alMenosUnaTransferencia;//Se puede reemplazar por transferencias.longitud() == 0, nos parece más prolijo así
     Usuario transferidorExclusivo;
+
+    //Técnicamente no hace falta mantener un registro de las transacciones, la consigna no lo pide
+    //Pero por completitud, consideramos importante llevar un conteo, en caso de querer
+    // mostrar el historial de transacciones, es necesario tener estos datos
     ListaEnlazada<Transferencia> transferencias;
     ListaEnlazada<Referencia> referencias;
     ListaEnlazada<Acumulación> acumulaciones;
     ListaEnlazada<Canje> canjes;
 
-
-    public Usuario(int id){
+    public Usuario(int id){//O(1)
         this.id = id;
         millasAcumuladas = 0;
         millasCanjeadas = 0;
@@ -82,7 +85,7 @@ public class Usuario implements InterfazUsuario {
         nuevaTransacción(canje, true, false);
     }
 
-    private void nuevaTransacción(Transacción tr, boolean sumaCanjeadas, boolean sumaAcumuladas){
+    private void nuevaTransacción(Transacción tr, boolean sumaCanjeadas, boolean sumaAcumuladas){//O(1)
         double millas = tr.obtenerMillas();
         if(sumaCanjeadas)
             millasCanjeadas += Math.abs(millas);
@@ -93,7 +96,7 @@ public class Usuario implements InterfazUsuario {
         saldo += millas;
     }
     
-    private void actualizarFactorCategoría(){
+    private void actualizarFactorCategoría(){//O(1)
         if(millasAcumuladas < 10000)
             factorCategoría = 1;
         else if (millasAcumuladas < 50000)
@@ -105,7 +108,8 @@ public class Usuario implements InterfazUsuario {
     }
 
     public Usuario obtenerTransferidorExclusivo(){//O(1)
-        return transferidorExclusivo;//Es null si se transfirió a varios usuarios o si nunca se transfirió
+        //Es null si se transfirió a varios usuarios o si nunca se transfirió
+        return transferidorExclusivo;
     }
     public double obtenerMillasAcumuladas(){//O(1)
         return millasAcumuladas;
@@ -128,8 +132,6 @@ public class Usuario implements InterfazUsuario {
             res =  "Oro";
         if(factorCategoría == 0)
             res =  "Platino";
-
-        //System.err.println(factorCategoría + ", " + res );
         return res;
     }
     
@@ -138,7 +140,7 @@ public class Usuario implements InterfazUsuario {
     }
 
     @Override 
-    public String toString(){
+    public String toString(){//No lo pide la consigna, está para debuggear y por completitud
         String res = "";
         res += "id: " + id + "\n";
         res += "fC: " + factorCategoría +"\n";

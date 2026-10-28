@@ -21,12 +21,8 @@ public class ListaEnlazada<T> implements Secuencia<T> {
         ultimo = null;
         longitud = 0;
     }
-
-    public int longitud(){
-        return longitud;
-    }
-
-    public void agregar(T cont){
+    
+    public void agregar(T cont){//O(1)
         Nodo nuevo = new Nodo(cont);
         nuevo.anterior = ultimo;
         if(ultimo == null)
@@ -37,14 +33,29 @@ public class ListaEnlazada<T> implements Secuencia<T> {
         longitud++;
     }
 
-    public T obtener(int i){
+    //No tiene sentido que tome un parámetro pero no pudimos hacerlo más prolijo
+    public T[] convertirAVector(T[] vector){//O(|L|), con |L| la longitud de la lista enlazada
+        Nodo actual = primero;
+        int i = 0;
+        while(actual != null){//Se repite hasta que no haya siguiente, |L| veces. O(|L|)
+            vector[i++] = actual.contenido;
+            actual = actual.siguiente;
+        }
+        return vector;
+    }
+
+    public int longitud(){//No se usa. Está por completitud. O(1)
+        return longitud;
+    }
+    
+    public T obtener(int i){//No se usa. Está por completitud. O(i)
         Nodo actual = primero;
         for(int n = 0; n < i; n++)
             actual = actual.siguiente;
         return actual.contenido;
     }
 
-    public void eliminar(int i){
+    public void eliminar(int i){//No se usa. Está por completitud. O(i)
         Nodo actual = primero;
         for(int n = 0; n < i; n++)
             actual = actual.siguiente;
@@ -59,24 +70,14 @@ public class ListaEnlazada<T> implements Secuencia<T> {
         longitud--;
     }
 
-    public void modificarPosicion(int i, T cont){
+    public void modificarPosicion(int i, T cont){//No se usa. Está por completitud. O(i)
         Nodo actual = primero;
         for(int n = 0; n < i; n++)
             actual = actual.siguiente;
         actual.contenido = cont;
     }
 
-    public T[] convertirAVector(T[] vector){//TODO: No tiene sentido que tome un parámetro
-        Nodo actual = primero;
-        int i = 0;
-        while(actual != null){
-            vector[i++] = actual.contenido;
-            actual = actual.siguiente;
-        }
-        return vector;
-    }
-
-    public String toString(){
+    public String toString(){//No lo pide la consigna, está para debuggear y por completitud
         String res = "";
         Nodo actual = primero;
         while (actual != null){

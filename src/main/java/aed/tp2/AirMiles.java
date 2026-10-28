@@ -15,7 +15,7 @@ public class AirMiles implements SistemaAirMiles {
     public AirMiles() {//O(1)
         usuarios = new ABB<Integer, Usuario>();
 
-        elMásAcumulador = new Usuario(-1);
+        elMásAcumulador = new Usuario(-1);//Los test piden que se devuelva -1 en caso de no haber ningún usuario
         elMásCanjeador = new Usuario(-1);
 
         promociones = new Trie<Promo>();
@@ -27,80 +27,84 @@ public class AirMiles implements SistemaAirMiles {
 
     public void registrarUsuario(int id) {//O(logU) promedio y O(U)peor
         Usuario usuario = new Usuario(id);
-        if(usuarios.tamaño() == 0){//Cambian "los más" ssi no había nadie antes
+        if(usuarios.tamaño() == 0){//Cambian "los más" si y sólo si no había nadie antes
             nuevoMásAcumulador(usuario);
             nuevoMásCanjeador(usuario);
         }
-        usuarios.definir(id, usuario);
-        maxHeapUsuarios.add(usuario);
+        usuarios.definir(id, usuario);//O(logU) promedio y O(U) peor por ser inserción en ABB
+        maxHeapUsuarios.add(usuario);//O(logU) por ser inserción en Heap
     }
 
     public void registrarUsuarioConReferidor(int idReferido, int idReferidor) {//O(logU) promedio y O(U)peor
-        Usuario referidor = usuarios.obtener(idReferidor);
+        Usuario referidor = usuarios.obtener(idReferidor);//O(logU) promedio y O(U) peor por ser búsqueda en ABB
         Usuario referido = new Usuario(idReferido);
-        usuarios.definir(idReferido, referido);
+        usuarios.definir(idReferido, referido);//O(logU) promedio y O(U) peor por ser inserción en ABB
         referidor.agregarReferencia(500, idReferido);
         referido.agregarReferencia(500, idReferidor);
 
-        maxHeapUsuarios.add(referido);
+        maxHeapUsuarios.add(referido);//O(logU) por ser inserción en Heap
         seModificóUsuario(referidor);
     }
 
     public void acumularMillas(int id, double distancia, String nombrePromo) {//O(logU + L) promedio y O(U + L)peor
-        Promo promoción = promociones.obtener(nombrePromo);
-        Usuario usuario = usuarios.obtener(id);
+        Promo promoción = promociones.obtener(nombrePromo);//O(L) por ser búsqueda en Trie
+        Usuario usuario = usuarios.obtener(id);//O(logU) promedio y O(U) peor por ser búsqueda en ABB
         usuario.agregarAcumular(nombrePromo, promoción, distancia);
         seModificóUsuario(usuario);
     }
 
     public void canjearMillas(int id, double cantidad) {//O(logU) promedio y O(U)peor
-        Usuario usuario = usuarios.obtener(id);
+        Usuario usuario = usuarios.obtener(id);//O(logU) promedio y O(U) peor por ser búsqueda en ABB
         usuario.agregarCanje(cantidad);
         seModificóUsuario(usuario);
     }
 
-    public void transferirMillas(int idOrigen, int idDestino, double cantidad) {//O(logU) promedio y O(U)peor
-        Usuario usuarioOrigen = usuarios.obtener(idOrigen);
-        Usuario usuarioDestino = usuarios.obtener(idDestino);
-        usuarioDestino.agregarTransferencia(cantidad, usuarioOrigen);//Le suman
-        usuarioOrigen.agregarTransferencia(-cantidad, usuarioDestino);//Le restan
+    public void transferirMillas(int idOrigen, int idDestino, double cantidad) {//O(logU) promedio y O(U) peor
+        Usuario usuarioOrigen = usuarios.obtener(idOrigen);//O(logU) promedio y O(U) peor por ser búsqueda en ABB
+        Usuario usuarioDestino = usuarios.obtener(idDestino);//O(logU) promedio y O(U) peor por ser búsqueda en ABB
+        usuarioDestino.agregarTransferencia(cantidad, usuarioOrigen);//Suma millas
+        usuarioOrigen.agregarTransferencia(-cantidad, usuarioDestino);//Resta millas
         seModificóUsuario(usuarioDestino);
         seModificóUsuario(usuarioOrigen);
     }
 
-    public double consultarSaldo(int id) {//O(logU) promedio y O(U)peor
-        return usuarios.obtener(id).obtenerSaldo();
+    public double consultarSaldo(int id) {//O(logU) promedio y O(U) peor
+        Usuario usuario = usuarios.obtener(id);//O(logU) promedio y O(U) peor por ser búsqueda en ABB
+        return usuario.obtenerSaldo();
     }
 
-    public String consultarCategoria(int id) {//O(logU) promedio y O(U)peor
-        return usuarios.obtener(id).obtenerCategoría();
+    public String consultarCategoria(int id) {//O(logU) promedio y O(U) peor
+        Usuario usuario = usuarios.obtener(id);//O(logU) promedio y O(U) peor por ser búsqueda en ABB
+        return usuario.obtenerCategoría();
     }
 
     public int[] rankingMillas(int n) {//O(nlogU)
-        //TODO: También se puede hacer con otro heaps que vaya sumando los que se eliminan, luego asignarle al mHU, el heap nuevo
         n = Math.min(n, usuarios.tamaño());
         int[] ids = new int[n];
         Usuario[] usuarios = new Usuario[n];
-        for (int i = 0; i < n; i++){
-            Usuario usu = maxHeapUsuarios.poll();
-            ids[i] = usu.obtenerId();
+        for (int i = 0; i < n; i++){//Se repite min(n, U) veces, en el peor caso U veces. O(UlogU)
+            Usuario usu = maxHeapUsuarios.poll();//O(logU)
+            ids[i] = usu.obtenerId();//O(1)
             usuarios[i] = usu;
         }
-        for (int i = 0; i < n; i++)
-            maxHeapUsuarios.add(usuarios[i]);
+        for (int i = 0; i < n; i++)//Se repite min(n, U) veces, en el peor caso U veces. O(UlogU)
+            maxHeapUsuarios.add(usuarios[i]);//O(logU)
         return ids;
     }
 
     public void iniciarPromocion(String nombre, double factor) {//O(L)
-        promociones.definir(nombre, new Promo(factor));
+        Promo promo = new Promo(factor);//O(1)
+        promociones.definir(nombre, promo);//O(L)
     }
 
     public void iniciarPromocionConTope(String nombre, double factor, double tope) {//O(L)
-        promociones.definir(nombre, new Promo(factor, tope));
+        Promo promo = new Promo(factor, tope);//O(1)
+        promociones.definir(nombre, promo);//O(L)
     }
 
     public void finalizarPromocion(String nombre) {//O(L)
-        promociones.obtener(nombre).finalizar();
+        Promo promo = promociones.obtener(nombre);//O(L) por ser búsqueda en un Trie
+        promo.finalizar();
     }
 
     public int elMasAcumulador() {//O(1)
@@ -123,30 +127,33 @@ public class AirMiles implements SistemaAirMiles {
         int idActual, idTransferidorExclusivo;
         Usuario transferidorExclusivo;
 
-        for (Usuario usu : usuarios) {
+        for (Usuario usu : usuarios) {//Se repite U veces, con U cantidad de usuarios//O(U)
             idActual = usu.obtenerId();
-            transferidorExclusivo = usu.obtenerTransferidorExclusivo();
+            transferidorExclusivo = usu.obtenerTransferidorExclusivo();//O(1)
             if(transferidorExclusivo != null){
-                idTransferidorExclusivo = transferidorExclusivo.obtenerId();
-                if(idActual < idTransferidorExclusivo)
+                idTransferidorExclusivo = transferidorExclusivo.obtenerId();//O(1)
+                if(idActual < idTransferidorExclusivo)//Evita tuplas repetidas (a,b) y (b,a)
                     if(transferidorExclusivo.obtenerTransferidorExclusivo() != null){//Si tiene un transfExc tiene que ser usu
                         int[] par = {idActual, idTransferidorExclusivo};
-                        listaEnlazada.agregar(par);
+                        listaEnlazada.agregar(par);//O(1)
                     }
             }
         }
 
-        return listaEnlazada.convertirAVector(new int[listaEnlazada.longitud()][]);
+        int[][] resultado = listaEnlazada.convertirAVector(new int[listaEnlazada.longitud()][]);//O(U)
+        //La lista enlazada tiene, en el peor caso, U/2 elementos (en el caso que todos los usuarios son transferidores exclusivos)
+        return resultado;
+
     }
 
-    private void seModificóUsuario(Usuario usuario){
+    private void seModificóUsuario(Usuario usuario){//O(logU)
         verificarSiEsElMásAcumulador(usuario);
         verificarSiEsElMásCanjeador(usuario);
         maxHeapUsuarios.remove(usuario);//Debería ser O(logU)
         maxHeapUsuarios.add(usuario);//Debería ser O(logU)
     }
 
-    private void verificarSiEsElMásAcumulador(Usuario usuario){
+    private void verificarSiEsElMásAcumulador(Usuario usuario){//O(1)
         if(usuario.obtenerMillasAcumuladas() > elMásAcumulador.obtenerMillasAcumuladas())
             nuevoMásAcumulador(usuario);
     }
@@ -155,7 +162,7 @@ public class AirMiles implements SistemaAirMiles {
         elMásAcumulador = usuario;
     }
 
-        private void verificarSiEsElMásCanjeador(Usuario usuario){
+    private void verificarSiEsElMásCanjeador(Usuario usuario){//O(1)
         if(usuario.obtenerMillasCanjeadas() > elMásCanjeador.obtenerMillasCanjeadas())
             nuevoMásCanjeador(usuario);
     }
@@ -164,7 +171,7 @@ public class AirMiles implements SistemaAirMiles {
         elMásCanjeador = usuario;
     }
 
-    public Usuario obtenerUsuario(int id){
-        return usuarios.obtener(id);
+    public Usuario obtenerUsuario(int id){//No la pide el TP, está para debugear
+        return usuarios.obtener(id);//Por ser una búsqueda en un ABB y no un AVL, no podemos asegurar la complejidad
     }
 }
