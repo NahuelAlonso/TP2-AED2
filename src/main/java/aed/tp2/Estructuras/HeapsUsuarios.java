@@ -144,5 +144,11 @@ public class HeapsUsuarios {
     }
     
 
+    public Usuario maximo(){//O(1) obtiene el maximo y lo devuelve
+        Usuario res = heap.get(0).usuario;
+        eliminar(res);
+        return res;
+    }
+
 
 }
