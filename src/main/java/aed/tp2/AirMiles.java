@@ -100,7 +100,7 @@ public class AirMiles implements SistemaAirMiles {
     }
 
     public void finalizarPromocion(String nombre) {//O(L)
-        promociones.borrar(nombre);
+        promociones.obtener(nombre).finalizar();
     }
 
     public int elMasAcumulador() {//O(1)

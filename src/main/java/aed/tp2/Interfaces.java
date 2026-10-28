@@ -19,5 +19,5 @@ interface InterfazPromo {
     public double tope();//O(1)  
     public boolean tieneTope();//O(1)
     public void consumirMillas(double cantidad);//O(1)
-
+    public void finalizar();//O(1)
 }
