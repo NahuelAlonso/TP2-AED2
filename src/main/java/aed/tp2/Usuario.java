@@ -1,6 +1,7 @@
 package aed.tp2;
 
 import aed.tp2.Estructuras.*;
+import aed.tp2.Estructuras.HeapsUsuarios.HandleHeaps;
 import aed.tp2.Transacciones.*;
 
 public class Usuario implements InterfazUsuario {
@@ -15,7 +16,7 @@ public class Usuario implements InterfazUsuario {
     ListaEnlazada<Referencia> referencias;
     ListaEnlazada<Acumulación> acumulaciones;
     ListaEnlazada<Canje> canjes;
-
+    HeapsUsuarios.HandleHeaps handle;
 
     public Usuario(int id){
         this.id = id;
@@ -152,4 +153,15 @@ public class Usuario implements InterfazUsuario {
 
         return res;
     }
+
+    public void setHandle(HandleHeaps h) { //O(1)
+        this.handle = h; 
+    }
+
+     public HandleHeaps handle() { //O(1)
+        return handle;
+     }
+
 }
+
+

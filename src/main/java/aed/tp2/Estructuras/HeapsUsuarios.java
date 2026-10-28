@@ -1,8 +1,6 @@
 package aed.tp2.Estructuras;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import aed.tp2.Usuario;
 
 public class HeapsUsuarios {
@@ -14,7 +12,7 @@ public class HeapsUsuarios {
     }
     
     public class HandleHeaps implements Handle<Usuario> {
-        private int posicion;
+        private int posicion; //-1 si no esta en el heap
         private Usuario usuario;
 
         private HandleHeaps(int pos, Usuario usuario){
@@ -24,21 +22,21 @@ public class HeapsUsuarios {
 
     
         //Devuelve el valor del elemento
-        public Usuario valor(){
+        public Usuario valor(){    //O(1)
             return usuario;
         }
     
         
         //Elimina al elemento de la colección
-        public void eliminar(){
+        public void eliminar(){    // O(log U)
             if (posicion >= 0 && posicion < heap.size()){
-                eliminarH(posicion);
+                eliminarPos(posicion);
             }
         }   
 
  
         //Modifica al elemento de la colección y su orden (de ser necesario)
-        public void modificar(Usuario v){
+        public void modificar(Usuario v){   // O(log U)
             this.usuario = v;
             acomodar(posicion);
         }
@@ -51,22 +49,32 @@ public class HeapsUsuarios {
     
     }
     
+    private HandleHeaps obtenerHandle(Usuario u) { //O(1) obtiene el handle guardado en el usuario
+        return u.handle();
+    }
+
     
-    private double saldo(int i) {
+    private double saldo(int i) {  //O(1) Devuelve el saldo del usuario en la pos i
         return heap.get(i).usuario.obtenerSaldo(); 
     }
 
-    public int tamaño() { 
+    public int tamaño() {  //O(1)
         return heap.size(); 
     }
 
-    public Handle<Usuario> agregar(Usuario u) {
+    public Handle<Usuario> agregar(Usuario u) { //O(log U) Agregar al usuario al heap y guardarle su handle
         HandleHeaps h = new HandleHeaps(heap.size(), u);
         heap.add(h);
+        u.setHandle(h);
         subir(h.posicion);
         return h;
     }
 
+
+    public void actualizar (Usuario u){ //O(log U) Actualiza la posicion del usuario con el saldo cambiado
+        HandleHeaps h = obtenerHandle(u);
+        acomodar(h.posicion);
+    }
     private void acomodar(int i) {
         int padre = (i-1)/2;
         if (i > 0 && saldo(i)>saldo(padre)){
@@ -77,7 +85,7 @@ public class HeapsUsuarios {
     }
 
 
-    private void eliminarH(int i) {
+    private void eliminarPos(int i) {
         int ultimo = heap.size()-1;
         if (i != ultimo ){
             intercambiar(i, ultimo);
@@ -86,8 +94,13 @@ public class HeapsUsuarios {
         }
         acomodar(i);
     }
+    public void eliminar (Usuario u){ // O(log U) Elimina el usuario del heap y elimina su handle
+        HandleHeaps h = obtenerHandle(u);
+        eliminarPos(h.posicion);
+        u.setHandle(null);
+    }
 
-    private void subir(int i) {
+    private void subir(int i) { //O(log U) En caso de poder, sube al usuario en el heap hasta llegar a la posicion adecuada
         int padre = (i-1)/2;
         while (i>0 && saldo(i) > saldo(padre)){
             padre = (i-1)/2;
@@ -96,7 +109,7 @@ public class HeapsUsuarios {
         }
     }
 
-    private void bajar(int i) {
+    private void bajar(int i) { //O(log U) En caso de poder, baja al usuario mediante las ramas del heap hasta que llegue a la posicion adecuada
         int tamaño = heap.size();
         int izq = 2 * i + 1;
         int der = 2 * i + 2;
@@ -121,7 +134,7 @@ public class HeapsUsuarios {
         }
     }
 
-    private void intercambiar(int i, int j) {
+    private void intercambiar(int i, int j) {   //O(1) intercambia las posiciones de los Handles en las posiciones i y j
         HandleHeaps a = heap.get(i);
         HandleHeaps b = heap.get(j);
         heap.set(i,b);
