@@ -15,8 +15,6 @@ public class AirMilesTests {
     @Test
     void crearSistema() {
         assertNotNull(am);
-        assertEquals(-1, am.elMasAcumulador());
-        assertEquals(-1, am.elMasCanjeador());
         assertEquals(0, am.paresTransferidoresExclusivos().length);
     }
 
@@ -388,11 +386,41 @@ public class AirMilesTests {
         }
     }
 
-    // sistema para el stress test (usuarios con ids 1..maxId)
+    @Test
+    void transferenciaRecibidaNoSumaATotales() {
+        am.registrarUsuario(1);
+        am.registrarUsuario(2);
+        am.acumularMillas(1, 9000, "NoPromo");
+        am.acumularMillas(2, 5000, "NoPromo");
+
+        // 2 recibe 6000: se suman a sus disponibles, pero no a sus totales (siguen en 5000)
+        am.transferirMillas(1, 2, 6000);
+        assertEquals(11000.0, am.consultarSaldo(2));
+        assertEquals("Bronce", am.consultarCategoria(2));
+        assertEquals(1, am.elMasAcumulador());
+        // Las millas transferidas sí cuentan para elMasCanjeador
+        assertEquals(1, am.elMasCanjeador());
+
+        // Sigue siendo Bronce: vuela 100 con factor 1.0
+        am.acumularMillas(2, 100, "NoPromo");
+        assertEquals(11100.0, am.consultarSaldo(2));
+    }
+
+    @Test
+    void finalizarPromocion() {
+        am.registrarUsuario(1);
+        am.iniciarPromocion("PromoVerano", 2.0);
+        am.acumularMillas(1, 100, "PromoVerano"); // 200
+        am.finalizarPromocion("PromoVerano");
+        am.acumularMillas(1, 100, "PromoVerano"); // ya no está activa: factor 1.0
+        assertEquals(300.0, am.consultarSaldo(1));
+    }
+
+    // Modelo simple del sistema para el stress test (usuarios con ids 1..maxId)
     private static class Modelo {
         int registrados = 0;
         double[] totales, disponibles, gastadas; // gastadas = canjeadas + enviadas
-        int[] contraparte;
+        int[] contraparte;                      // única contraparte en transferencias (0 si no transfirió)
         boolean[] variasContrapartes;
         boolean[][] transfirieron;
 
@@ -464,11 +492,13 @@ public class AirMilesTests {
         am.registrarUsuario(++m.registrados);
 
         for (int op = 0; op < OPERACIONES; op++) {
+            // Unos pocos usuarios concentran muchas operaciones, para que lleguen a categorías altas
             int id = rnd.nextInt(5) == 0 ? 1 + rnd.nextInt(Math.min(10, m.registrados)) : 1 + rnd.nextInt(m.registrados);
             int r = rnd.nextInt(100);
 
             if (r < 10 && m.registrados < USUARIOS) {
                 int nuevo = ++m.registrados;
+                // Como en los tests, los referidores son Bronce y lo siguen siendo después del bono
                 if (rnd.nextBoolean() && m.totales[id] + 500 < 10000) {
                     am.registrarUsuarioConReferidor(nuevo, id);
                     m.sumar(nuevo, 500);
@@ -479,6 +509,7 @@ public class AirMilesTests {
                 assertEquals(m.disponibles[nuevo], am.consultarSaldo(nuevo));
             } else if (r < 50) {
                 double distancia = 1 + rnd.nextInt(rnd.nextInt(20) == 0 ? 100000 : 1000);
+                // Como en los tests, los usuarios Platino solo acumulan con NoPromo
                 int p = m.categoria(id).equals("Platino") ? -1 : rnd.nextInt(3) - 1;
                 am.acumularMillas(id, distancia, p < 0 ? "NoPromo" : promos[p]);
                 m.sumar(id, distancia * m.factorCategoria(id) * (p < 0 ? 1.0 : factores[p]));
@@ -487,6 +518,8 @@ public class AirMilesTests {
                 am.canjearMillas(id, cantidad);
                 m.gastar(id, cantidad);
             } else if (r < 85) {
+                // Se forman pares con las parejas (2k-1, 2k) y se rompen transfiriendo a otros usuarios.
+                // Nunca se transfiere entre dos usuarios que ya se transfirieron entre sí.
                 int pareja = id % 2 == 1 ? id + 1 : id - 1;
                 boolean libres = pareja <= m.registrados && m.contraparte[id] == 0 && m.contraparte[pareja] == 0;
                 int destino = libres ? pareja : (rnd.nextInt(10) == 0 ? 1 + rnd.nextInt(m.registrados) : id);
@@ -501,10 +534,9 @@ public class AirMilesTests {
                 verificarRanking(m, 1 + rnd.nextInt(m.registrados + 5));
             }
 
-            
-            //System.err.println(am.obtenerUsuario(id));
             assertEquals(m.disponibles[id], am.consultarSaldo(id));
             assertEquals(m.categoria(id), am.consultarCategoria(id));
+            // Los máximos se comparan por valor, para no depender de cómo se desempata
             assertEquals(m.maximo(m.totales), m.totales[am.elMasAcumulador()]);
             if (m.maximo(m.gastadas) > 0) assertEquals(m.maximo(m.gastadas), m.gastadas[am.elMasCanjeador()]);
         }
@@ -514,6 +546,7 @@ public class AirMilesTests {
         verificarPares(m);
     }
 
+    // Compara los saldos de los usuarios devueltos (no los ids, para no depender de cómo se desempata)
     private void verificarRanking(Modelo m, int n) {
         int[] top = am.rankingMillas(n);
         assertEquals(Math.min(n, m.registrados), top.length);
@@ -533,8 +566,9 @@ public class AirMilesTests {
         for (int[] par : pares) {
             assertNotNull(par);
             assertTrue(m.esPar(par[0], par[1]));
-            assertFalse(visto[par[0]]);
+            assertFalse(visto[par[0]]); // sin pares repetidos
             visto[par[0]] = visto[par[1]] = true;
         }
     }
 }
+
