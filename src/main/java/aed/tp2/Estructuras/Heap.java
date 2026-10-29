@@ -1,6 +1,7 @@
 package aed.tp2.Estructuras;
 import java.util.ArrayList;
 import java.util.Comparator;
+import aed.tp2.Usuario;
 
 public class Heap<T>{
     private ArrayList<HandleHeaps> heap;
@@ -59,6 +60,10 @@ public class Heap<T>{
 
     // 
 
+    public int obtenerPosicion(Usuario u){
+        return u.handle().posicion;
+    }
+
     public int obtenerPosicion(T e) {//O(n) Devuelve la posicion del elemento en el arreglo del heap, o -1 si no esta
         int res = -1;
         for (int i = 0; i < heap.size(); i++) {
@@ -85,9 +90,9 @@ public class Heap<T>{
         return orden.compare(heap.get(i).valor, heap.get(j).valor);
     }
 
-    public void actualizar (T u){ //O(log U) Actualiza la posicion del usuario con el saldo cambiado
-        acomodar(obtenerPosicion(u));
-    }
+    // public void actualizar (T u){ //O(log U) Actualiza la posicion del usuario con el saldo cambiado
+    //     acomodar(obtenerPosicion(u));
+    // }
 
     private void acomodar(int i) {
         int padre = (i-1)/2;
@@ -108,10 +113,11 @@ public class Heap<T>{
         }
         acomodar(i);
     }
-    public void eliminar (T u){ // O(log U) Elimina el usuario del heap y elimina su handle
-        eliminarPos(obtenerPosicion(u));
-        //u.setHandle(null);
-    }
+    
+    // public void eliminar (T u){ // O(log U) Elimina el usuario del heap y elimina su handle
+    //     eliminarPos(obtenerPosicion(u));
+    //     //u.setHandle(null);
+    // }
 
     private void subir(int i) { //O(log U) En caso de poder, sube al usuario en el heap hasta llegar a la posicion adecuada
         int padre = (i-1)/2;
