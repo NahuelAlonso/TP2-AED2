@@ -1,83 +1,97 @@
 package aed.tp2.Estructuras;
-
 import java.util.ArrayList;
-import aed.tp2.Usuario;
+import java.util.Comparator;
 
-public class HeapsUsuarios {
+public class Heap<T>{
     private ArrayList<HandleHeaps> heap;
+    private Comparator<T> orden;
 
-
-    public HeapsUsuarios(){
+    public Heap(Comparator<T> orden){
         this.heap = new ArrayList<>();
+        this.orden = orden;
     }
-    
-    public class HandleHeaps implements Handle<Usuario> {
+
+
+    public class HandleHeaps implements Handle<T> {
         private int posicion; //-1 si no esta en el heap
-        private Usuario usuario;
+        private T valor;
 
-        private HandleHeaps(int pos, Usuario usuario){
+        private HandleHeaps(int pos, T valor){
             this.posicion = pos;
-            this.usuario = usuario;
+            this.valor = valor;
         }
 
-    
+
         //Devuelve el valor del elemento
-        public Usuario valor(){    //O(1)
-            return usuario;
+        public T valor(){    //O(1)
+            return valor;
         }
-    
-        
+
+
         //Elimina al elemento de la colección
         public void eliminar(){    // O(log U)
             if (posicion >= 0 && posicion < heap.size()){
                 eliminarPos(posicion);
             }
-        }   
+        }
 
- 
+
         //Modifica al elemento de la colección y su orden (de ser necesario)
-        public void modificar(Usuario v){   // O(log U)
-            this.usuario = v;
+        public void modificar(T v){   // O(log U)
+            this.valor = v;
             acomodar(posicion);
         }
 
-      
+
         //Devuelve si el valor que representa el Handle es equivalente al que representa otro.
-        public boolean equals(Handle<Usuario> u){
-            return u != null && this.usuario.obtenerId() == u.valor().obtenerId();
+        public boolean equals(Handle<T> u){
+            return u != null && this.valor.equals(u.valor());
         }
-    
-    }
-    
-    private HandleHeaps obtenerHandle(Usuario u) { //O(1) obtiene el handle guardado en el usuario
-        return u.handle();
+
     }
 
-    
-    private double saldo(int i) {  //O(1) Devuelve el saldo del usuario en la pos i
-        return heap.get(i).usuario.obtenerSaldo(); 
+    // private HandleHeaps obtenerHandle(Usuario u) { //O(1) obtiene el handle guardado en el usuario
+    //     return u.handle();
+    // }
+    // private T saldo(int i) {  //O(1) Devuelve el saldo del usuario en la pos i
+    //     return heap.get(i).valor();
+    // }
+
+    // 
+
+    public int obtenerPosicion(T e) {//O(n) Devuelve la posicion del elemento en el arreglo del heap, o -1 si no esta
+        int res = -1;
+        for (int i = 0; i < heap.size(); i++) {
+            if (!heap.get(i).valor.equals(e)){
+                res = i;
+            }
+        }
+        return res;
     }
 
     public int tamaño() {  //O(1)
-        return heap.size(); 
+        return heap.size();
     }
 
-    public Handle<Usuario> agregar(Usuario u) { //O(log U) Agregar al usuario al heap y guardarle su handle
+    public HandleHeaps agregar(T u) { //O(log U) Agregar al usuario al heap y guardarle su handle
         HandleHeaps h = new HandleHeaps(heap.size(), u);
         heap.add(h);
-        u.setHandle(h);
+        //u.setHandle(h);
         subir(h.posicion);
         return h;
     }
 
-
-    public void actualizar (Usuario u){ //O(log U) Actualiza la posicion del usuario con el saldo cambiado
-        HandleHeaps h = obtenerHandle(u);
-        acomodar(h.posicion);
+    private int comparador (int i, int j){
+        return orden.compare(heap.get(i).valor, heap.get(j).valor);
     }
+
+    public void actualizar (T u){ //O(log U) Actualiza la posicion del usuario con el saldo cambiado
+        acomodar(obtenerPosicion(u));
+    }
+
     private void acomodar(int i) {
         int padre = (i-1)/2;
-        if (i > 0 && saldo(i)>saldo(padre)){
+        if (comparador(i, padre)>0){
             subir(i);
         }else{
             bajar(i);
@@ -94,15 +108,14 @@ public class HeapsUsuarios {
         }
         acomodar(i);
     }
-    public void eliminar (Usuario u){ // O(log U) Elimina el usuario del heap y elimina su handle
-        HandleHeaps h = obtenerHandle(u);
-        eliminarPos(h.posicion);
-        u.setHandle(null);
+    public void eliminar (T u){ // O(log U) Elimina el usuario del heap y elimina su handle
+        eliminarPos(obtenerPosicion(u));
+        //u.setHandle(null);
     }
 
     private void subir(int i) { //O(log U) En caso de poder, sube al usuario en el heap hasta llegar a la posicion adecuada
         int padre = (i-1)/2;
-        while (i>0 && saldo(i) > saldo(padre)){
+        while (i>0 && comparador(i, padre)>0){
             padre = (i-1)/2;
             intercambiar(i, padre);
             i = padre;
@@ -119,10 +132,10 @@ public class HeapsUsuarios {
             izq = 2 * i + 1;
             der = 2 * i + 2;
             mayor = i;
-            if (izq < tamaño && saldo(izq)>saldo(der) && saldo(izq)>saldo(mayor)){
+            if (izq < tamaño && comparador(izq, der)>0 && comparador(izq, mayor)>0){
                 mayor = izq;
-            } 
-            if (der < tamaño && saldo(der)>saldo(izq) && saldo(der)>saldo(mayor)){
+            }
+            if (der < tamaño && comparador(der, izq)>0 && comparador(der, mayor)>0){
                 mayor = der;
             }
             if (mayor == i){
@@ -142,11 +155,21 @@ public class HeapsUsuarios {
         heap.set(j,a);
         a.posicion = j;
     }
-    
 
-    public Usuario maximo(){//O(1) obtiene el maximo y lo devuelve
-        Usuario res = heap.get(0).usuario;
-        eliminar(res);
+
+    public T maximo(){//O(1) obtiene el maximo y lo devuelve
+        
+        T res = heap.get(0).valor();
+        int ultimo = heap.size() - 1;
+        if (ultimo > 0){
+            intercambiar(0, ultimo);
+        }
+        HandleHeaps max = heap.remove(ultimo);
+        max.posicion = -1;
+        if (!heap.isEmpty()){
+            bajar(0);
+        } 
+
         return res;
     }
 
