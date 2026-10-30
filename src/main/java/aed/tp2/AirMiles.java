@@ -9,7 +9,7 @@ public class AirMiles implements SistemaAirMiles {
     ABB<Integer, Usuario> usuarios;
     Usuario elMásAcumulador, elMásCanjeador;
     Trie<Promo> promociones;
-    PriorityQueue<Usuario> maxHeapUsuarios;
+    Heap<Usuario> maxHeapUsuarios;
 
 
     public AirMiles() {//O(1)
@@ -22,7 +22,7 @@ public class AirMiles implements SistemaAirMiles {
         promociones.definir("NoPromo", new Promo());
 
         Comparator<Usuario> comparator = (a,b) -> Double.compare(b.obtenerSaldo(), a.obtenerSaldo());
-        maxHeapUsuarios = new PriorityQueue<>(comparator);
+        maxHeapUsuarios = new Heap<Usuario>(comparator);
     }
 
     public void registrarUsuario(int id) {//O(logU) promedio y O(U)peor
@@ -32,7 +32,7 @@ public class AirMiles implements SistemaAirMiles {
             nuevoMásCanjeador(usuario);
         }
         usuarios.definir(id, usuario);
-        maxHeapUsuarios.add(usuario);
+        maxHeapUsuarios.agregar(usuario);
     }
 
     public void registrarUsuarioConReferidor(int idReferido, int idReferidor) {//O(logU) promedio y O(U)peor
@@ -42,7 +42,7 @@ public class AirMiles implements SistemaAirMiles {
         referidor.agregarReferencia(500, idReferido);
         referido.agregarReferencia(500, idReferidor);
 
-        maxHeapUsuarios.add(referido);
+        maxHeapUsuarios.agregar(referido);
         seModificóUsuario(referidor);
     }
 
@@ -81,12 +81,12 @@ public class AirMiles implements SistemaAirMiles {
         int[] ids = new int[n];
         Usuario[] usuarios = new Usuario[n];
         for (int i = 0; i < n; i++){
-            Usuario usu = maxHeapUsuarios.poll();
+            Usuario usu = maxHeapUsuarios.maximo();
             ids[i] = usu.obtenerId();
             usuarios[i] = usu;
         }
         for (int i = 0; i < n; i++)
-            maxHeapUsuarios.add(usuarios[i]);
+            maxHeapUsuarios.agregar(usuarios[i]);
         return ids;
     }
 
@@ -141,8 +141,8 @@ public class AirMiles implements SistemaAirMiles {
     private void seModificóUsuario(Usuario usuario){
         verificarSiEsElMásAcumulador(usuario);
         verificarSiEsElMásCanjeador(usuario);
-        maxHeapUsuarios.remove(usuario);//Debería ser O(logU)
-        maxHeapUsuarios.add(usuario);//Debería ser O(logU)
+        maxHeapUsuarios.eliminar(usuario);//Debería ser O(logU)
+        maxHeapUsuarios.agregar(usuario);//Debería ser O(logU)
     }
 
     private void verificarSiEsElMásAcumulador(Usuario usuario){

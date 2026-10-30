@@ -113,10 +113,10 @@ public class Heap<T>{
         acomodar(i);
     }
     
-    // public void eliminar (T u){ // O(log U) Elimina el usuario del heap y elimina su handle
-    //     eliminarPos(obtenerPosicion(u));
-    //     //u.setHandle(null);
-    // }
+    public void eliminar (T u){ // O(log U) Elimina el usuario del heap y elimina su handle
+        eliminarPos(obtenerPosicion(u));//TODO: Está bien la complejidad?
+        //u.setHandle(null);
+    }
 
     private void subir(int i) { //O(log U) En caso de poder, sube al usuario en el heap hasta llegar a la posicion adecuada
         int padre = (i-1)/2;
