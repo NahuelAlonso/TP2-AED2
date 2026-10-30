@@ -1,7 +1,6 @@
 package aed.tp2.Estructuras;
 import java.util.ArrayList;
 import java.util.Comparator;
-import aed.tp2.Usuario;
 
 public class Heap<T>{
     private ArrayList<HandleHeaps> heap;
@@ -60,9 +59,9 @@ public class Heap<T>{
 
     // 
 
-    public int obtenerPosicion(Usuario u){
-        return u.handle().posicion;
-    }
+    // public int obtenerPosicion(Usuario u){
+    //     return u.handle().posicion;
+    // }
 
     public int obtenerPosicion(T e) {//O(n) Devuelve la posicion del elemento en el arreglo del heap, o -1 si no esta
         int res = -1;

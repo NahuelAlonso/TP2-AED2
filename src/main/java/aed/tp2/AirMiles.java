@@ -77,7 +77,6 @@ public class AirMiles implements SistemaAirMiles {
     }
 
     public int[] rankingMillas(int n) {//O(nlogU)
-        //TODO: También se puede hacer con otro heaps que vaya sumando los que se eliminan, luego asignarle al mHU, el heap nuevo
         n = Math.min(n, usuarios.tamaño());
         int[] ids = new int[n];
         Usuario[] usuarios = new Usuario[n];
