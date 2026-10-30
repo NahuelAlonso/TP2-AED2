@@ -1,6 +1,8 @@
 package aed.tp2.Estructuras;
 
-public class ListaEnlazada<T> implements Secuencia<T> {
+import java.util.Iterator;
+
+public class ListaEnlazada<T> implements Secuencia<T>, Iterable<T> {
 
     private Nodo primero;
     private Nodo ultimo;
@@ -31,17 +33,6 @@ public class ListaEnlazada<T> implements Secuencia<T> {
             ultimo.siguiente = nuevo;
         ultimo = nuevo;
         longitud++;
-    }
-
-    //No tiene sentido que tome un parámetro pero no pudimos hacerlo más prolijo
-    public T[] convertirAVector(T[] vector){//O(|L|), con |L| la longitud de la lista enlazada
-        Nodo actual = primero;
-        int i = 0;
-        while(actual != null){//Se repite hasta que no haya siguiente, |L| veces. O(|L|)
-            vector[i++] = actual.contenido;
-            actual = actual.siguiente;
-        }
-        return vector;
     }
 
     public int longitud(){//No se usa. Está por completitud. O(1)
@@ -78,12 +69,32 @@ public class ListaEnlazada<T> implements Secuencia<T> {
     }
 
     public String toString(){//No lo pide la consigna, está para debuggear y por completitud
+        //TODO: Testear si funciona
         String res = "";
-        Nodo actual = primero;
-        while (actual != null){
+        for(Nodo actual : this)
             res += actual.contenido.toString() + ", ";
-            actual = actual.siguiente;
-        }
         return res;
+    }
+    
+    private class Iterador implements Iterator<T>{
+        private Nodo actual = primero;
+
+        @Override 
+        public boolean hasNext(){
+            return actual != null;
+        }
+
+        @Override 
+        public T next(){
+            T cont = actual.contenido;
+            actual = actual.siguiente;
+            return cont;
+        }
+
+    }
+
+    @Override 
+    public Iterator<T> iterator(){
+        return new Iterador();
     }
 }

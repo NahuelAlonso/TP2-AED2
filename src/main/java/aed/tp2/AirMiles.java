@@ -140,10 +140,13 @@ public class AirMiles implements SistemaAirMiles {
             }
         }
 
-        int[][] resultado = listaEnlazada.convertirAVector(new int[listaEnlazada.longitud()][]);//O(U)
-        //La lista enlazada tiene, en el peor caso, U/2 elementos (en el caso que todos los usuarios son transferidores exclusivos)
-        return resultado;
-
+        int [][] res = new int[listaEnlazada.longitud()][];
+        int i = 0;
+        for (int[] par : listaEnlazada){ // Paso los pares a un arreglo, O(longitud). Se mantiene O(U)
+            res[i] = par;
+            i++;
+        }
+        return res;
     }
 
     private void seModificóUsuario(Usuario usuario){//O(logU)

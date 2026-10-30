@@ -68,7 +68,7 @@ public class Usuario implements InterfazUsuario {
         promoción.consumirMillas(millasSinTope);
         
         if(promoción.tieneTope() && tope < millasSinTope)
-            millas = tope + factorCategoría * (distancia - tope) / (factorPromoción * factorCategoría);
+            millas = tope + factorCategoría * (distancia - tope / (factorPromoción * factorCategoría));
         else
             millas = millasSinTope;
         
