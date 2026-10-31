@@ -35,6 +35,9 @@ public class Heap<T>{
             }
         }
 
+        public Integer posicion(){
+            return posicion;
+        }
 
         //Modifica al elemento de la colección y su orden (de ser necesario)
         public void modificar(T v){   // O(log U)
@@ -63,7 +66,7 @@ public class Heap<T>{
     //     return u.handle().posicion;
     // }
 
-    public int obtenerPosicion(T e) {//O(n) Devuelve la posicion del elemento en el arreglo del heap, o -1 si no esta
+    /*public int obtenerPosicion(T e) {//O(n) Devuelve la posicion del elemento en el arreglo del heap, o -1 si no esta
         int res = -1;
         for (int i = 0; i < heap.size(); i++) {
             if (!heap.get(i).valor.equals(e)){
@@ -72,6 +75,10 @@ public class Heap<T>{
         }
         return res;
     }
+*/
+    public int obtenerPosicion(HandleHeaps handle) {//O(n) Devuelve la posicion del elemento en el arreglo del heap, o -1 si no esta
+            return handle.posicion;
+        }
 
     public int tamaño() {  //O(1)
         return heap.size();
@@ -93,7 +100,7 @@ public class Heap<T>{
     //     acomodar(obtenerPosicion(u));
     // }
 
-    private void acomodar(int i) {
+    public  void acomodar(int i) {
         int padre = (i-1)/2;
         if (comparador(i, padre)>0){
             subir(i);
@@ -104,6 +111,20 @@ public class Heap<T>{
 
 
     private void eliminarPos(int i) {
+        if (i == -1 || i >= heap.size()) return;
+
+        int ultimo = heap.size() - 1;
+        if (i == ultimo) {
+            heap.remove(ultimo).posicion = -1;
+            return;
+        }
+        
+        intercambiar(i, ultimo);
+        heap.remove(ultimo).posicion = -1;
+        acomodar(i);
+    }
+    /*
+        private void eliminarPos(int i) {
         int ultimo = heap.size()-1;
         if (i != ultimo ){
             intercambiar(i, ultimo);
@@ -112,18 +133,21 @@ public class Heap<T>{
         }
         acomodar(i);
     }
+    */
+
     
-    public void eliminar (T u){ // O(log U) Elimina el usuario del heap y elimina su handle
-        eliminarPos(obtenerPosicion(u));//TODO: Está bien la complejidad?
-        //u.setHandle(null);
-    }
+    // public void eliminar (T u){ // O(log U) Elimina el usuario del heap y elimina su handle
+    //     eliminarPos(obtenerPosicion(u));//TODO: Está bien la complejidad?
+    //     //u.setHandle(null);
+    // }
 
     private void subir(int i) { //O(log U) En caso de poder, sube al usuario en el heap hasta llegar a la posicion adecuada
         int padre = (i-1)/2;
         while (i>0 && comparador(i, padre)>0){
-            padre = (i-1)/2;
             intercambiar(i, padre);
             i = padre;
+            padre = (i-1)/2;
+            
         }
     }
 
@@ -137,10 +161,10 @@ public class Heap<T>{
             izq = 2 * i + 1;
             der = 2 * i + 2;
             mayor = i;
-            if (izq < tamaño && comparador(izq, der)>0 && comparador(izq, mayor)>0){
+            if (izq < tamaño && comparador(izq, mayor)>0){
                 mayor = izq;
             }
-            if (der < tamaño && comparador(der, izq)>0 && comparador(der, mayor)>0){
+            if (der < tamaño && comparador(der, mayor)>0){
                 mayor = der;
             }
             if (mayor == i){

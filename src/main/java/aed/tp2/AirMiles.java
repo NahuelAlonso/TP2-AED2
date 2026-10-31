@@ -32,7 +32,10 @@ public class AirMiles implements SistemaAirMiles {
             nuevoMásCanjeador(usuario);
         }
         usuarios.definir(id, usuario);
-        maxHeapUsuarios.agregar(usuario);
+        Heap<Usuario>.HandleHeaps h = maxHeapUsuarios.agregar(usuario);
+        usuario.setHandle(h);
+        seModificóUsuario(usuario);
+        
     }
 
     public void registrarUsuarioConReferidor(int idReferido, int idReferidor) {//O(logU) promedio y O(U)peor
@@ -42,7 +45,8 @@ public class AirMiles implements SistemaAirMiles {
         referidor.agregarReferencia(500, idReferido);
         referido.agregarReferencia(500, idReferidor);
 
-        maxHeapUsuarios.agregar(referido);
+        Heap<Usuario>.HandleHeaps h = maxHeapUsuarios.agregar(referido);
+        referido.setHandle(h);
         seModificóUsuario(referidor);
     }
 
@@ -141,8 +145,12 @@ public class AirMiles implements SistemaAirMiles {
     private void seModificóUsuario(Usuario usuario){
         verificarSiEsElMásAcumulador(usuario);
         verificarSiEsElMásCanjeador(usuario);
-        maxHeapUsuarios.eliminar(usuario);//Debería ser O(logU)
-        maxHeapUsuarios.agregar(usuario);//Debería ser O(logU)
+
+        int posicion = usuario.handle().posicion();
+        maxHeapUsuarios.acomodar(posicion);
+
+        //maxHeapUsuarios.eliminar(usuario);//Debería ser O(logU)
+        //maxHeapUsuarios.agregar(usuario);//Debería ser O(logU)
     }
 
     private void verificarSiEsElMásAcumulador(Usuario usuario){
