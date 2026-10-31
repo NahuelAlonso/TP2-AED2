@@ -2,7 +2,7 @@ package aed.tp2.Estructuras;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class Heap<T>{
+public class Heap<T> implements ColaPrioridad<T>{
     private ArrayList<HandleHeaps> heap;
     private Comparator<T> orden;
 
