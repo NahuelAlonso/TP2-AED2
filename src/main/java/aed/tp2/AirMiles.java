@@ -9,7 +9,7 @@ public class AirMiles implements SistemaAirMiles {
     ABB<Integer, Usuario> usuarios;
     Usuario elMásAcumulador, elMásCanjeador;
     Trie<Promo> promociones;
-    Heap<Usuario> maxHeapUsuarios;
+    HeapABB<Usuario> maxHeapUsuarios;
 
 
     public AirMiles() {//O(1)
@@ -22,7 +22,7 @@ public class AirMiles implements SistemaAirMiles {
         promociones.definir("NoPromo", new Promo());
 
         Comparator<Usuario> comparator = (a,b) -> Double.compare(b.obtenerSaldo(), a.obtenerSaldo());
-        maxHeapUsuarios = new Heap<Usuario>(comparator);
+        maxHeapUsuarios = new HeapABB<Usuario>(comparator);
     }
 
     public void registrarUsuario(int id) {//O(logU) promedio y O(U)peor
@@ -141,7 +141,7 @@ public class AirMiles implements SistemaAirMiles {
     private void seModificóUsuario(Usuario usuario){
         verificarSiEsElMásAcumulador(usuario);
         verificarSiEsElMásCanjeador(usuario);
-        maxHeapUsuarios.eliminar(usuario);//Debería ser O(logU)
+        maxHeapUsuarios.eliminar(usuario.handle().indice);//Debería ser O(logU)
         maxHeapUsuarios.agregar(usuario);//Debería ser O(logU)
     }
 
