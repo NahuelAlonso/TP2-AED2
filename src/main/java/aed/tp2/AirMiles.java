@@ -21,7 +21,7 @@ public class AirMiles implements SistemaAirMiles {
         promociones = new Trie<Promo>();
         promociones.definir("NoPromo", new Promo());
 
-        Comparator<Usuario> comparator = (a,b) -> Double.compare(b.obtenerSaldo(), a.obtenerSaldo());
+        Comparator<Usuario> comparator = (a,b) -> Double.compare(a.obtenerSaldo(), b.obtenerSaldo());
         maxHeapUsuarios = new Heap<Usuario>(comparator);
     }
 
