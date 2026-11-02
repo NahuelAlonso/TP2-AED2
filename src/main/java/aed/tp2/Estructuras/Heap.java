@@ -2,7 +2,8 @@ package aed.tp2.Estructuras;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class Heap<T> implements ColaPrioridad<T>{
+public class Heap<T>{
+    //implements ColaPrioridad<T>
     private ArrayList<HandleHeaps> heap;
     private Comparator<T> orden;
 
@@ -10,7 +11,6 @@ public class Heap<T> implements ColaPrioridad<T>{
         this.heap = new ArrayList<>();
         this.orden = orden;
     }
-
 
     public class HandleHeaps implements Handle<T> {
         private int posicion; //-1 si no esta en el heap
@@ -110,7 +110,7 @@ public class Heap<T> implements ColaPrioridad<T>{
     }
 
 
-    private void eliminarPos(int i) {
+    public void eliminarPos(int i) {
         if (i == -1 || i >= heap.size()) return;
 
         int ultimo = heap.size() - 1;
@@ -143,7 +143,7 @@ public class Heap<T> implements ColaPrioridad<T>{
 
     private void subir(int i) { //O(log U) En caso de poder, sube al usuario en el heap hasta llegar a la posicion adecuada
         int padre = (i-1)/2;
-        while (i>0 && comparador(i, padre)>0){
+        while (i>0 && comparador(i, padre)>=0){
             intercambiar(i, padre);
             i = padre;
             padre = (i-1)/2;
@@ -161,7 +161,7 @@ public class Heap<T> implements ColaPrioridad<T>{
             izq = 2 * i + 1;
             der = 2 * i + 2;
             mayor = i;
-            if (izq < tamaño && comparador(izq, mayor)>0){
+            if (izq < tamaño && comparador(izq, mayor)>=0){
                 mayor = izq;
             }
             if (der < tamaño && comparador(der, mayor)>0){

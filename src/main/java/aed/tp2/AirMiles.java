@@ -89,8 +89,10 @@ public class AirMiles implements SistemaAirMiles {
             ids[i] = usu.obtenerId();
             usuarios[i] = usu;
         }
-        for (int i = 0; i < n; i++)
-            maxHeapUsuarios.agregar(usuarios[i]);
+        for (int i = 0; i < n; i++){
+            Heap<Usuario>.HandleHeaps h = maxHeapUsuarios.agregar(usuarios[i]);
+            usuarios[i].setHandle(h);
+        }
         return ids;
     }
 
@@ -147,7 +149,8 @@ public class AirMiles implements SistemaAirMiles {
         verificarSiEsElMásCanjeador(usuario);
 
         int posicion = usuario.handle().posicion();
-        maxHeapUsuarios.acomodar(posicion);
+        usuario.handle().modificar(usuario);
+        //maxHeapUsuarios.acomodar(posicion);
 
         //maxHeapUsuarios.eliminar(usuario);//Debería ser O(logU)
         //maxHeapUsuarios.agregar(usuario);//Debería ser O(logU)
