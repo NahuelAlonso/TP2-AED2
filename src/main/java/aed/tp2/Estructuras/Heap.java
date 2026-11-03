@@ -3,12 +3,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class Heap<T>{
-    private ArrayList<HandleHeaps> heap;
+    private ArrayList<HandleHeaps> vector;
     private Comparator<T> orden;
 
     public Heap(Comparator<T> orden){
-        this.heap = new ArrayList<>(); //Heap
-        this.orden = orden; //Como se va a ordenar el heap
+        this.vector = new ArrayList<>(); //Heap
+        this.orden = orden; //Cómo se va a ordenar el heap
     }
 
     public class HandleHeaps implements Handle<T> {
@@ -29,7 +29,7 @@ public class Heap<T>{
 
         //Elimina al elemento de la colección
         public void eliminar(){    // O(log U) -- ya que elimina la posicion del heap en O(1) y luego reacomoda con su ultimo en O(log U)
-            if (posicion >= 0 && posicion < heap.size()){
+            if (posicion >= 0 && posicion < vector.size()){
                 eliminarPos(posicion);
             }
         }
@@ -57,19 +57,19 @@ public class Heap<T>{
         }
 
     public int tamaño() {  //O(1)
-        return heap.size();
+        return vector.size();
     }
 
-    public HandleHeaps agregar(T u) { //O(log U) Agregar al usuario al heap y lo acomoda
-        HandleHeaps h = new HandleHeaps(heap.size(), u);
-        heap.add(h);
+    public HandleHeaps agregar(T u) { //O(log U) Agrega al usuario al heap y lo acomoda
+        HandleHeaps h = new HandleHeaps(vector.size(), u);
+        vector.add(h);
         //u.setHandle(h);
         subir(h.posicion);
         return h;
     }
 
     private int comparador (int i, int j){ //O(1) funcion que utiliza el orden pasado
-        return orden.compare(heap.get(i).valor, heap.get(j).valor);
+        return orden.compare(vector.get(i).valor, vector.get(j).valor);
     }
 
     // public void actualizar (T u){ //O(log U) Actualiza la posicion del usuario con el saldo cambiado
@@ -87,16 +87,16 @@ public class Heap<T>{
 
 
     public void eliminarPos(int i) { //O(log U) elimina el usuario en la pos i y lo intercambia con el ultimo para luego acomodarlo
-        if (i == -1 || i >= heap.size()) return;
+        if (i == -1 || i >= vector.size()) return;
 
-        int ultimo = heap.size() - 1;
+        int ultimo = vector.size() - 1;
         if (i == ultimo) {
-            heap.remove(ultimo).posicion = -1;
+            vector.remove(ultimo).posicion = -1;
             return;
         }
         
         intercambiar(i, ultimo);
-        heap.remove(ultimo).posicion = -1;
+        vector.remove(ultimo).posicion = -1;
         acomodar(i);
     }
 
@@ -111,7 +111,7 @@ public class Heap<T>{
     }
 
     private void bajar(int i) { //O(log U) En caso de poder, baja al usuario mediante las ramas del heap hasta que llegue a la posicion adecuada recorriendo la lista segun su orden
-        int tamaño = heap.size();
+        int tamaño = vector.size();
         int izq = 2 * i + 1;
         int der = 2 * i + 2;
         int mayor = i;
@@ -136,25 +136,25 @@ public class Heap<T>{
     }
 
     private void intercambiar(int i, int j) {   //O(1) intercambia las posiciones de los Handles en las posiciones i y j
-        HandleHeaps a = heap.get(i);
-        HandleHeaps b = heap.get(j);
-        heap.set(i,b);
+        HandleHeaps a = vector.get(i);
+        HandleHeaps b = vector.get(j);
+        vector.set(i,b);
         b.posicion = i;
-        heap.set(j,a);
+        vector.set(j,a);
         a.posicion = j;
     }
 
 
     public T maximo(){//O(log U) obtiene el maximo y lo devuelve en O(1) para luego eliminarlo de la lista y acomodar el ultimo en O(log U) 
         
-        T res = heap.get(0).valor();
-        int ultimo = heap.size() - 1;
+        T res = vector.get(0).valor();
+        int ultimo = vector.size() - 1;
         if (ultimo > 0){
             intercambiar(0, ultimo);
         }
-        HandleHeaps max = heap.remove(ultimo);
+        HandleHeaps max = vector.remove(ultimo);
         max.posicion = -1;
-        if (!heap.isEmpty()){
+        if (!vector.isEmpty()){
             bajar(0);
         } 
 
