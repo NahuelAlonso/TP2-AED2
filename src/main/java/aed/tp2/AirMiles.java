@@ -1,6 +1,6 @@
 package aed.tp2;
 
-import java.util.*;
+import java.util.Comparator;
 
 import aed.tp2.Estructuras.*;
 
@@ -42,7 +42,7 @@ public class AirMiles implements SistemaAirMiles {
         Usuario referidor = usuarios.obtener(idReferidor);                    //O(logU) promedio O(U) peor (Abb:obtener)
         Usuario referido = new Usuario(idReferido);
         usuarios.definir(idReferido, referido);                               //O(logU) promedio O(U) peor (Abb:definir)
-        referidor.agregarReferencia(500, idReferido);                         //O(1)
+        referidor.agregarReferencia(500, idReferido);                  //O(1)
         referido.agregarReferencia(500, idReferidor);
 
         Heap<Usuario>.HandleHeaps h = maxHeapUsuarios.agregar(referido);
@@ -73,17 +73,17 @@ public class AirMiles implements SistemaAirMiles {
     }
 
     public double consultarSaldo(int id) {//O(logU) promedio y O(U) peor
-        Usuario usuario = usuarios.obtener(id);                //O(logU) promedio O(U) peor (Abb:obtener)
-        return usuario.obtenerSaldo();                         //O(1)
+        Usuario usuario = usuarios.obtener(id);                            //O(logU) promedio O(U) peor (Abb:obtener)
+        return usuario.obtenerSaldo();                                     //O(1)
     }
 
     public String consultarCategoria(int id) {//O(logU) promedio y O(U) peor
-        Usuario usuario = usuarios.obtener(id);               //O(logU) promedio O(U) peor (Abb:obtener)
-        return usuario.obtenerCategoría();                    //O(1)
+        Usuario usuario = usuarios.obtener(id);                            //O(logU) promedio O(U) peor (Abb:obtener)
+        return usuario.obtenerCategoría();                                 //O(1)
     }
 
     public int[] rankingMillas(int n) {//O(nlogU)
-        n = Math.min(n, usuarios.tamaño());                                //Toma minimo entre n y usuarios tamaño:O(1)
+        n = Math.min(n, usuarios.tamaño());//Toma minimo entre n y usuarios tamaño:O(1)
         int[] ids = new int[n];
         Usuario[] usuarios = new Usuario[n];
         for (int i = 0; i < n; i++){                                       //O(n)//Se repite min(n, U) veces, en el peor caso U veces. O(UlogU)
@@ -91,7 +91,7 @@ public class AirMiles implements SistemaAirMiles {
             ids[i] = usu.obtenerId();                                      //O(1)
             usuarios[i] = usu;
         }
-        for (int i = 0; i < n; i++){                                        //Se repite min(n, U) veces, en el peor caso U veces. O(UlogU)
+        for (int i = 0; i < n; i++){//Se repite min(n, U) veces, en el peor caso U veces. O(UlogU)
             Heap<Usuario>.HandleHeaps h = maxHeapUsuarios.agregar(usuarios[i]);    //O(logU)  (Heap:Agregar)
             usuarios[i].setHandle(h);
         }
@@ -109,7 +109,7 @@ public class AirMiles implements SistemaAirMiles {
     }
 
     public void finalizarPromocion(String nombre) {//O(L)
-        Promo promo = promociones.obtener(nombre);                 //O(|L|) (Trie:Buscar)
+        Promo promo = promociones.obtener(nombre);                    //O(|L|) (Trie:Buscar)
         promo.finalizar();
     }
 
@@ -141,14 +141,14 @@ public class AirMiles implements SistemaAirMiles {
                 if(idActual < idTransferidorExclusivo)//Evita tuplas repetidas (a,b) y (b,a)
                     if(transferidorExclusivo.obtenerTransferidorExclusivo() != null){//Si tiene un transfExc tiene que ser usu
                         int[] par = {idActual, idTransferidorExclusivo};
-                        listaEnlazada.agregar(par);//O(1)
+                        listaEnlazada.agregar(par);
                     }
             }
         }
 
         int [][] res = new int[listaEnlazada.longitud()][];
         int i = 0;
-        for (int[] par : listaEnlazada){ // Paso los pares a un arreglo, O(longitud). Se mantiene O(U)
+        for (int[] par : listaEnlazada){ //Paso los pares a un arreglo, O(longitud). Se mantiene O(U)
             res[i] = par;
             i++;
         }
@@ -158,8 +158,7 @@ public class AirMiles implements SistemaAirMiles {
     private void seModificóUsuario(Usuario usuario){//O(logU)
         verificarSiEsElMásAcumulador(usuario);                              //O(1)
         verificarSiEsElMásCanjeador(usuario);                               //O(1)
-
-        int posicion = usuario.handle().posicion();//TODO: Qué es?
+        
         usuario.handle().modificar(usuario);                                //O(1)
     }
 
