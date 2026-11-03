@@ -19,8 +19,9 @@ public class Usuario implements InterfazUsuario {
     ListaEnlazada<Referencia> referencias;
     ListaEnlazada<Acumulación> acumulaciones;
     ListaEnlazada<Canje> canjes;
+    Heap<Usuario>.HandleHeaps handle;
 
-    public Usuario(int id){//O(1)
+    public Usuario(int id){
         this.id = id;
         millasAcumuladas = 0;
         millasCanjeadas = 0;
@@ -154,4 +155,15 @@ public class Usuario implements InterfazUsuario {
 
         return res;
     }
+
+    public void setHandle(Heap<Usuario>.HandleHeaps h) { //O(1)
+        this.handle = h; 
+    }
+
+    public Heap<Usuario>.HandleHeaps handle() { //O(1)
+        return handle;
+    }
+
 }
+
+
