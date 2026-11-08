@@ -26,7 +26,7 @@ public class TrieTest {
         // Insertamos palabras básicas
         trie.definir("casa", 10);
         trie.definir("casamiento", 20);
-        trie.definir("carro", 30);
+        trie.definir("verano", 30);
         assertEquals(3, trie.tamaño());
 
         // Caso específico: "promo" y "promocion"
