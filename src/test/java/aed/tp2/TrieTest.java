@@ -18,7 +18,6 @@ public class TrieTest {
     @Test
     void crearTrieVacio() {
         assertNotNull(trie);
-        // Asumiendo que tengas un atributo o método tamaño, o puedes verificar inserciones directamente
         assertEquals(0, trie.tamaño()); 
     }
 
